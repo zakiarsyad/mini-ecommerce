@@ -32,25 +32,8 @@ describe('Product', function () {
                     })
             })
         })
-    })
 
-    describe('GET /products', function () {
-        describe('success get all products', function () {
-            it('should return an array of product objects', function (done) {
-                chai.request(app)
-                    .get('/products')
-                    .end(function (err, res) {
-                        expect(err).to.be.null
-                        expect(res).to.have.status(200)
-                        expect(res).to.be.an('array')
-                        done()
-                    })
-            })
-        })
-    })
-
-    describe('POST /products', function () {
-        describe('success add a product', function () {
+        describe('create a product', function () {
             it('Should return an object with status code 201', function (done) {
                 chai.request(app)
                     .post('/products')
@@ -70,32 +53,44 @@ describe('Product', function () {
                     })
             })
         })
+    })
 
-        describe('fail add a product', function () {
-            it('Should return an error with status code 500', function (done) {
+    describe('GET /carts', function () {
+        describe("success get user's cart", function () {
+            it('should return an object', function (done) {
                 chai.request(app)
-                    .post('/products')
+                    .get('/carts')
                     .set('token', token)
-                    .send({
-                        productName: '',
-                        price: '',
-                        category: '',
-                        stock: '',
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(200)
+                        expect(res).to.be.an('object')
+                        done()
                     })
+            })
+        })
+    })
+
+    describe('POST /carts', function () {
+        describe('success create a cart', function () {
+            it('should return an object', function (done) {
+                chai.request(app)
+                    .post('/carts')
+                    .set('token', token)
                     .end(res => {
                         expect(err).to.be.null
-                        expect(res).to.have.status(500)
+                        expect(res).to.have.status(201)
                         done()
                     })
             })
         })
     })
 
-    describe('GET /product/:id', function () {
-        describe('success get single product', function () {
+    describe('POST /product/:id', function () {
+        describe('success add a product to cart', function () {
             it('should return an object of product', function (done) {
                 chai.request(app)
-                    .get(`/product/${productId}`)
+                    .get(`/carts/${productId}`)
                     .set('token', token)
                     .end(function (err, res) {
                         expect(err).to.be.null
@@ -107,34 +102,11 @@ describe('Product', function () {
         })
     })
 
-    describe('PATCH /product/:id', function () {
-        describe('success edit a product', function () {
+    describe('DELETE /product/:id', function () {
+        describe('success delete a product from cart', function () {
             it('should return an object of product', function (done) {
                 chai.request(app)
-                    .patch(`/product/${productId}`)
-                    .set('token', token)
-                    .send({
-                        productName: 'Test product update',
-                        price: 10000,
-                        category: 'Test sategory update',
-                        stock: 10,
-                    })
-                    .attach('image', fs.readFileSync('hactiv8.jpg'), 'hactiv8.jpg')
-                    .end(function (err, res) {
-                        expect(err).to.be.null
-                        expect(res).to.have.status(200)
-                        expect(res).to.be.an('object')
-                        done()
-                    })
-            })
-        })
-    })
-
-    describe('PATCH /product/:id', function () {
-        describe('success edit a product', function () {
-            it('should return an object of product', function (done) {
-                chai.request(app)
-                    .patch(`/product/${productId}`)
+                    .patch(`/carts/${productId}`)
                     .set('token', token)
                     .end(function (err, res) {
                         expect(err).to.be.null
