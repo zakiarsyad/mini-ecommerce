@@ -7,7 +7,7 @@ module.exports = (err, req, res, next) => {
         status = 401
         message = err.message
 
-        res.status(status).json({ message })
+        res.status(status).json({ errors: message })
     } else if (err.name === 'ValidationError') {
         const errors = []
         for (let key in err.errors) {

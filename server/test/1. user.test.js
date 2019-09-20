@@ -11,8 +11,11 @@ chai.use(chaiHttp);
 
 describe('User', function () {
     describe('#register()', function () {
-        before(function () {
-            mongoose.connection.dropCollection('users')
+        before(function (done) {
+            mongoose.connect(`mongodb://localhost:27017/ecommerce-test`, { useNewUrlParser: true, useUnifiedTopology: true }, function () {
+                mongoose.connection.dropCollection('users')
+                done()
+            })
         })
 
         it('should create a new user when calling the POST method', function (done) {
@@ -24,8 +27,7 @@ describe('User', function () {
                 })
                 .end(function (err, res) {
                     expect(err).to.be.null
-                    expect(res).to.have.status(201)
-                    expect(res.body).to.have.own.property('created')
+                    expect(res).to.have.status(201) 
                     expect(res.body).to.have.own.property('token')
                     done()
                 })

@@ -15,12 +15,6 @@ Response :
 
 ```
 {
-		"created" : {
-				"email" : "customer@mail.com",
-        "role" : "customer",
-        "_id" : "1234567890",
-        "money" : 10000
-		},
 		"token" : "aksjdlkajdakdkapodkapd.........."
 }
 ```

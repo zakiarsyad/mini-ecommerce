@@ -1,5 +1,6 @@
 
-require('dotenv').config()
+if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test")
+    require('dotenv').config()
 
 const express = require('express')
 const mongoose = require('mongoose')
@@ -10,7 +11,7 @@ const errorHandler = require('./middlewares/errorHandler')
 const app = express()
 const PORT = process.env.PORT || 3000
 
-mongoose.connect('mongodb://localhost:27017/ecommerce', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(`mongodb+srv://admin:admin@cluster0-loyjn.mongodb.net/e-commerce${(process.env.NODE_ENV === "test") ? "-test" : ""}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(function () {
         console.log(`connection success`)
     })

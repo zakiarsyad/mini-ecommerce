@@ -14,7 +14,7 @@ class UserController {
                     email
                 })
 
-                res.status(201).json({ created: user, token })
+                res.status(201).json({ token })
             })
             .catch(next)
     }
