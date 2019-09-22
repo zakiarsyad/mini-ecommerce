@@ -93,7 +93,7 @@ export default {
     },
     data() {
         return {
-            server: `http://localhost:3000`,
+            server: `http://34.87.95.252`,
             adminProduct: [],
             loading: false,
             selectedProduct: ''
