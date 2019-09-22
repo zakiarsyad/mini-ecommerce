@@ -3,10 +3,28 @@ const Cart = require('../models/cart')
 const Product = require('../models/product')
 
 class CartController {
-    static getCart(req, res, next) {
+    static getUnpaidCart(req, res, next) {
         const { userId } = req.decode
     
         Cart.findOne({ userId, status: 'unpaid' }).populate('items.productId')
+            .then(cart => {
+                res.status(200).json(cart)
+            })
+            .catch(next)
+    }
+
+    static getUserCart(req, res, next) {
+        const { userId } = req.decode
+
+        Cart.find({ userId }).populate('items.productId')
+            .then(cart => {
+                res.status(200).json(cart)
+            })
+            .catch(next)
+    }
+
+    static getAllCart(req, res, next) {
+        Cart.find().populate('items.productId').populate('userId')
             .then(cart => {
                 res.status(200).json(cart)
             })
@@ -115,6 +133,19 @@ class CartController {
             .then(cart => {
                 cart.status = status
                 return cart.save()
+            })
+            .then(cart => {
+                res.status(200).json(cart)
+            })
+            .catch(next)
+    }
+
+    static delete(req, res, next) {
+        const { id } = req.params
+
+        Cart.findById(id)
+            .then(cart => {
+                return cart.delete()
             })
             .then(cart => {
                 res.status(200).json(cart)

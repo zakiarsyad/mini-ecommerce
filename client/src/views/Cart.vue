@@ -37,16 +37,19 @@
             <div class="w-2/12 flex justify-center my-2 font-bold text-lg">{{ totalPrice }}</div>
             <div class="w-2/12 flex justify-center my-2 font-bold text-lg"></div>
         </div>
-        <div class="flex">
-          <div class="w-6/12"></div>
-          <div 
-            class="w-4/12">
-              <button
-                @click.prevent="checkout"
-                class="checkout w-full mt-2 w-full bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">
-                CHECKOUT NOW</button>
-          </div>
-          <div class="w-2/12"></div>
+        <div 
+            v-if="cart"
+            class="flex">
+            <div class="w-6/12"></div>
+            <div 
+                class="w-4/12">
+                <button
+                    v-if="cart.items.length > 0"
+                    @click.prevent="checkout"
+                    class="checkout w-full mt-2 w-full bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">
+                    CHECKOUT NOW</button>
+            </div>
+            <div class="w-2/12"></div>
         </div>
 
         <router-view

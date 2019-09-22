@@ -213,6 +213,8 @@ Response :
 }
 ```
 
+
+
 ### `POST /carts`
 
 | Route    | HTTP   | Headers        | Body   | Description   | Additional Info         |

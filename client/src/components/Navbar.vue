@@ -26,6 +26,12 @@
             <i class="<i fas fa-user-cog fa-1.5x"></i>
         </router-link>
         <router-link
+            v-if="isAdmin"
+            to="/orderconfirm"
+            class="px-2">
+            confirmation
+        </router-link>
+        <router-link
             v-if="isLogin && !isAdmin"
             to="/cart"
             class="px-2 flex items-center">
@@ -33,9 +39,9 @@
         </router-link>
         <router-link
             v-if="isLogin && !isAdmin"
-            to="/cart/checkout"
+            to="/history"
             class="px-2 flex items-center">
-            checkout
+            history
         </router-link>
         <router-link
             v-if="isLogin && !isAdmin"

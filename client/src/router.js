@@ -12,6 +12,8 @@ import Checkout from './views/Checkout.vue'
 import AdminPage from './views/AdminPage.vue'
 import AddProduct from './views/AddProduct.vue'
 import EditProduct from './views/EditProduct.vue'
+import History from './views/History.vue'
+import OrderConfirm from './views/OrderConfirm.vue'
 
 Vue.use(Router)
 
@@ -78,6 +80,16 @@ export default new Router({
       path: '/register',
       name: 'register',
       component: Register
+    },
+    {
+      path: '/history',
+      name: 'history',
+      component: History
+    },
+    {
+      path: '/orderconfirm',
+      name: 'orderconfirm',
+      component: OrderConfirm
     }
   ]
 })

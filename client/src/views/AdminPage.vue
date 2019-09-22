@@ -10,7 +10,7 @@
                     ADD NEW PRODUCT
                 </button>
             </div>
-            <div class="content text-center overflow-auto rounded-lg border border-black">
+            <div class="content text-center overflow-auto rounded-lg">
                 <div v-for="product in adminProduct" :key="product._id">
                     <div 
                         class="rounded shadow-lg m-4 py-4 px-8 bg-white flex cursor-pointer">
@@ -26,7 +26,7 @@
                                     {{ product.name }}
                                 </div>
                             </div>
-                            <div class="flex bg-gray-400">
+                            <div class="flex bg-gray-200">
                                 <div class="w-3/12">
                                     description
                                 </div>
@@ -42,7 +42,7 @@
                                     {{ product.category }}
                                 </div>
                             </div>
-                            <div class="flex bg-gray-400">
+                            <div class="flex bg-gray-200">
                                 <div class="w-3/12">
                                     price
                                 </div>
@@ -59,16 +59,18 @@
                                 </div>
                             </div>
                         </div>
-                        <button
-                            @click.prevent="editProductForm(product)"
-                            class="h-8 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white border border-green-500 hover:border-transparent rounded focus:outline-none text-center px-2 mr-4">
+                        <div class="flex items-end">
+                            <button
+                                @click.prevent="editProductForm(product)"
+                                class="h-8 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white border border-green-500 hover:border-transparent rounded focus:outline-none text-center px-2 mr-4">
                             EDIT
-                        </button>
-                        <button
-                            @click.prevent="deleteProduct(product._id)"
-                            class="h-8 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white border border-red-500 hover:border-transparent rounded focus:outline-none text-center px-2">
-                            DELETE
-                        </button>
+                            </button>
+                            <button
+                                @click.prevent="deleteProduct(product._id)"
+                                class="h-8 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white border border-red-500 hover:border-transparent rounded focus:outline-none text-center px-2">
+                                DELETE
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

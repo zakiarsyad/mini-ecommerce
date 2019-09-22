@@ -17,12 +17,19 @@
                 :products="products"
                 :cart="cart"
                 :totalPrice="totalPrice"
+                :allCart="allCart"
+                :adminCart="adminCart"
                 @login="login"
                 @register="register"
                 @addToCart="addToCart"
                 @getCart="getCart"
                 @deleteFromCart="deleteFromCart"
-                @checkout="checkout"/>
+                @checkout="checkout"
+                @getAllCart="getAllCart"
+                @deleteCart="deleteCart"
+                @getAdminCart="getAdminCart"
+                @processOrder="processOrder"
+                @payCart="payCart"/>
         </div>
         <pageFooter 
             id="pageFooter"/>
@@ -59,7 +66,9 @@ export default {
         },
         products: [],
         cart: null,
-        totalPrice: 0
+        totalPrice: 0,
+        allCart: [],
+        adminCart: []
     }
     },
     methods: {
@@ -199,7 +208,7 @@ export default {
 
             axios({
                 method: `get`,
-                url: `${this.server}/carts`,
+                url: `${this.server}/carts/unpaid`,
                 headers: {
                     token: localStorage.getItem('token')
                 }
@@ -251,7 +260,6 @@ export default {
         },
         checkToken() {
             const token = localStorage.getItem('token')
-            console.log('ini token', token);
 
             axios({
                 method: `post`,
@@ -261,8 +269,6 @@ export default {
                 }
             })
                 .then(({ data }) => {
-                    console.log('ini data dari axios', data);
-
                     if (data.isAdmin === true) {
                         this.isLogin = true
                         this.isAdmin = true
@@ -277,13 +283,13 @@ export default {
                     this.$router.push('/login')
                 })
         },
-        checkout(cartId) {
+        checkout(id) {
             this.loading = true
             const token = localStorage.getItem('token')
             
             axios({
                 method: `patch`,
-                url: `${this.server}/carts/${cartId}`,
+                url: `${this.server}/carts/${id}`,
                 headers: {
                     token: token
                 },
@@ -292,39 +298,52 @@ export default {
                 }
             })
                 .then(({ data }) => {
+                    return axios({
+                        method: `post`,
+                        url: `${this.server}/carts`,
+                        headers: {
+                            token: token
+                        }
+                    })
+                })
+                .then(() => {
                     this.loading = false
                     this.$router.push('/cart/checkout')
-                    // const promises = []
-
-                    // data.items.forEach(el => {
-                    //     promises.push(this.reduceStock(el.productId, el.qty))
-                    // })
-
-                    // return Promise.all(promises)
-                // })
-                // .then(() => {
-                //     return axios({
-                //         method: `post`,
-                //         url: `${this.server}/carts`,
-                //         headers: {
-                //             token: data.token
-                //         }
-                //     })
-                // })
-                // .then(() => {
-                    
                 })
                 .catch(err => {
                     this.loading = false
                     this.$router.push('/cart')
                 })
         },
+        payCart(id) {
+            this.loading = true
+            const token = localStorage.getItem('token')
+            
+            axios({
+                method: `patch`,
+                url: `${this.server}/carts/${id}`,
+                headers: {
+                    token: token
+                },
+                data: {
+                    status: 'paid'
+                }
+            })
+                .then(() => {
+                    this.loading = false
+                    this.$toast.open('payment success')
+                    this.$nextTick(() => {
+                        this.getAllCart()
+                    })
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$toast.error(err.response.data)
+                })
+        },
         reduceStock(productId, qty) {
             const newStock = productId.stock - qty
             const token = localStorage.getItem('token')
-            console.log(productId);
-            console.log(qty);
-
             axios({
                 method: `patch`,
                 url: `${this.server}/products/${productId}/stock`,
@@ -335,6 +354,93 @@ export default {
                     stock: newStock
                 }
             })
+
+        },
+        getAllCart() {
+            const token = localStorage.getItem('token')
+            this.loading = true
+
+            axios({
+                method: `get`,
+                url: `${this.server}/carts/user`,
+                headers: {
+                    token: token
+                },
+            })
+                .then(({ data }) => {
+                    this.loading = false
+                    this.allCart = data
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$router.push('/cart')
+                })
+        },
+        deleteCart(id) {
+            const token = localStorage.getItem('token')
+            this.loading = true
+
+            axios({
+                method: `delete`,
+                url: `${this.server}/carts/${id}`,
+                headers: {
+                    token: token
+                },
+            })
+                .then(({ data }) => {
+                    this.loading = false
+                    this.$nextTick(() => {
+                        this.getAllCart()
+                    })
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$router.push('/cart')
+                })
+        },
+        getAdminCart() {
+            const token = localStorage.getItem('token')
+            this.loading = true
+
+            axios({
+                method: `get`,
+                url: `${this.server}/carts`,
+                headers: {
+                    token: token
+                },
+            })
+                .then(({ data }) => {
+                    this.loading = false
+                    this.adminCart = data
+                })
+                .catch(err => {
+                    this.loading = false
+                })
+        },
+        processOrder(id) {
+            this.loading = true
+            const token = localStorage.getItem('token')
+            
+            axios({
+                method: `patch`,
+                url: `${this.server}/carts/${id}`,
+                headers: {
+                    token: token
+                },
+                data: {
+                    status: 'shipped'
+                }
+            })
+                .then(({ data }) => {
+                    this.loading = false
+                    this.$nextTick(() => {
+                        this.getAdminCart()
+                    })
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$router.push('/cart')
+                })
         }
     },
     created: function () {

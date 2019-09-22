@@ -54,20 +54,16 @@ export default {
   props: ['cart', 'totalPrice'],
   data () {
     return {
-
+        selectedCart: ''
     }
   },
   methods: {
     backToCart () {
         this.$router.push('/cart')
     },
-    addToCart () {
-        this.selectedProduct = this.productDetail
-        this.$emit('addToCart', this.amount, this.selectedProduct)
-    },
     confirmPayment() {
         this.$swal("Please seat back!", "We are processing your order", "success")
-        this.$emit('confirmPayment')
+        this.$router.push('/history')
     }
   }
 }
