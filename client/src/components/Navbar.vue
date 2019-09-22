@@ -2,14 +2,16 @@
     <nav class="p-4 flex items-center fixed w-full h-16 shadow">
         <router-link
             to="/"
-            class="px-2 no-underline mr-12">
+            class="px-2 no-underline flex w-auto items-center mr-4">
             <i class="fab fa-vuejs fa-2x"></i>
+            <div class="w-full ml-2">VBOARD</div>
         </router-link>
         <button
+            v-if="!isAdmin"
             to="/products"
-            class="px-2 text-lg font-bold no-underline focus:outline-none"
+            class="px-2 text-lg font-bold no-underline focus:outline-none flex"
             @click.prevent="getProducts"
-            >BOARDS</button>
+            >PRODUCTS</button>
         <input
             v-model="keyword"
             class="w-full rounded mx-4 px-4 py-1 focus:outline-none"

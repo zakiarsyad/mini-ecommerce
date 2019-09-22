@@ -1,7 +1,6 @@
 # 	Ecommerce with Express and TDD
 
 
-
 ## List of users routing
 
 ### `POST /users/register`

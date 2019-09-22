@@ -284,39 +284,22 @@ export default {
                     this.$router.push('/login')
                 })
         },
-        checkout(id) {
-            this.loading = true
+        reduceStock(productId, qty) {
+            const newStock = productId.stock - qty
             const token = localStorage.getItem('token')
-            
+            console.log(productId);
+            console.log(qty);
+
             axios({
                 method: `patch`,
-                url: `${this.server}/carts/${id}`,
+                url: `${this.server}/products/${productId}/stock`,
                 headers: {
                     token: token
                 },
                 data: {
-                    status: 'confirmed'
+                    stock: newStock
                 }
             })
-                .then(({ data }) => {
-                    return axios({
-                        method: `post`,
-                        url: `${this.server}/carts`,
-                        headers: {
-                            token: token
-                        }
-                    })
-                })
-                .then(() => {
-                    this.loading = false
-                    this.$toast.open('confirmation success')
-                    this.$router.push('/history')
-                    // this.$router.push('/cart/checkout')
-                })
-                .catch(err => {
-                    this.loading = false
-                    this.$router.push('/cart')
-                })
         },
         payCart(id) {
             this.loading = true
@@ -344,21 +327,6 @@ export default {
                     this.$toast.error(err.response.data)
                 })
         },
-        reduceStock(productId, qty) {
-            const newStock = productId.stock - qty
-            const token = localStorage.getItem('token')
-            axios({
-                method: `patch`,
-                url: `${this.server}/products/${productId}/stock`,
-                headers: {
-                    token: token
-                },
-                data: {
-                    stock: newStock
-                }
-            })
-
-        },
         getAllCart() {
             const token = localStorage.getItem('token')
             this.loading = true
@@ -385,6 +353,56 @@ export default {
                     this.$router.push('/cart')
                 })
         },
+        checkout(id) {
+            this.loading = true
+            const token = localStorage.getItem('token')
+            
+            axios({
+                method: `patch`,
+                url: `${this.server}/carts/${id}`,
+                headers: {
+                    token: token
+                },
+                data: {
+                    status: 'confirmed'
+                }
+            })
+                .then(({ data }) => {
+                    const promises = []
+
+                    data.items.forEach(item => {
+                        axios({
+                            method: `patch`,
+                            url: `${this.server}/products/${item.productId._id}/stock`,
+                            headers: {
+                                token: token
+                            },
+                            data: {
+                                stock: (item.productId.stock - item.qty)
+                            }
+                        })
+                    })
+
+                    return Promise.all(promises)
+                })
+                .then(() => {
+                    return axios({
+                        method: `post`,
+                        url: `${this.server}/carts`,
+                        headers: {
+                            token: token
+                        }
+                    })
+                })
+                .then(() => {
+                    this.loading = false
+                    this.$toast.open('checkout product success')
+                    this.$router.push('/history')
+                })
+                .catch(err => {
+                    this.loading = false
+                })
+        },
         deleteCart(id) {
             const token = localStorage.getItem('token')
             this.loading = true
@@ -397,6 +415,28 @@ export default {
                 },
             })
                 .then(({ data }) => {
+                    console.log(data);
+                    const promises = []
+
+                    data.items.forEach(item => {
+                        console.log(item.productId._id);
+                        console.log(item.productId.stock);
+                        console.log(item.qty);
+                        axios({
+                            method: `patch`,
+                            url: `${this.server}/products/${item.productId._id}/stock`,
+                            headers: {
+                                token: token
+                            },
+                            data: {
+                                stock: (item.productId.stock + item.qty)
+                            }
+                        })
+                    })
+
+                    return Promise.all(promises)
+                })
+                .then(() => {
                     this.loading = false
                     this.$nextTick(() => {
                         this.getAllCart()

@@ -1,18 +1,21 @@
 <template>
     <div class="w-10/12 mx-auto my-12">
-        <h1 class="h-20 text-5xl font-bold text-center mb-24">CHECKOUT HISTORY</h1>
-        <hr>
-        <div class="flex">
-            <div class="w-5/12 flex justify-center my-3 font-bold text-xl">Order id</div>
-            <div class="w-5/12 flex justify-center my-3 font-bold text-xl">Status</div>
-            <div class="w-2/12 flex justify-center my-3 font-bold text-xl"></div>
-        </div>
-        <hr>
+        <h1 class="h-20 text-5xl font-bold text-center mb-2">CHECKOUT HISTORY</h1>
         <div>
-            <div v-for="cart in allCart" :key="cart._id">
+            <div 
+                v-for="cart in allCart" 
+                :key="cart._id"
+                class="mt-8">
+                <hr> <hr> <hr> <hr> <hr> <hr> <hr> <hr>
+                <div class="flex">
+                    <div class="w-5/12 flex justify-center my-3 font-bold text-xl">Order id</div>
+                    <div class="w-5/12 flex justify-center my-3 font-bold text-xl">Status</div>
+                    <div class="w-2/12 flex justify-center my-3 font-bold text-xl"></div>
+                </div>
+                <hr> <hr> <hr> <hr> <hr> <hr> <hr> <hr>
                 <div class="flex items-center">
                     <div class="w-5/12 flex justify-center my-2"> {{ cart._id }} </div>
-                    <div class="w-5/12 flex justify-center my-2"> {{ cart.status }} </div>
+                    <div class="w-5/12 flex justify-center my-2 text-green-700 font-bold"> {{ cart.status }} </div>
                     <div class="w-2/12 flex justify-center items-center my-2 pr-12">
                         <button 
                             v-if="cart.status === 'confirmed'"
@@ -28,7 +31,7 @@
                         </button>
                         <div 
                             v-if="cart.status === 'paid'"
-                            class="text-green-700 text-center">
+                            class="text-green-700 text-center font-bold">
                             we're processing your order
                         </div>
                         <button 
@@ -60,8 +63,6 @@
                             <div class="w-2/12 flex justify-center my-2 pr-12">
                             </div>
                         </div>
-                        <hr>
-                        <hr>
                         <hr>
                     </div>
                 </div>  

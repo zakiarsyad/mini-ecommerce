@@ -6,7 +6,7 @@ class CartController {
     static getUnpaidCart(req, res, next) {
         const { userId } = req.decode
     
-        Cart.findOne({ userId, status: 'unpaid' }).populate('items.productId')
+        Cart.findOne({ userId, status: 'unpaid' }).populate('items.productId').sort({updatedAt: -1})
             .then(cart => {
                 res.status(200).json(cart)
             })
@@ -16,7 +16,7 @@ class CartController {
     static getUserCart(req, res, next) {
         const { userId } = req.decode
 
-        Cart.find({ userId }).populate('items.productId')
+        Cart.find({ userId }).populate('items.productId').sort({updatedAt: -1})
             .then(cart => {
                 res.status(200).json(cart)
             })
@@ -24,7 +24,7 @@ class CartController {
     }
 
     static getAllCart(req, res, next) {
-        Cart.find().populate('items.productId').populate('userId')
+        Cart.find().populate('items.productId').populate('userId').sort({updatedAt: -1})
             .then(cart => {
                 res.status(200).json(cart)
             })
@@ -37,13 +37,10 @@ class CartController {
         Cart.findOne({ userId, status: 'unpaid' })
             .then(cart => {
                 if (cart) res.status(200).json(cart)
-                else {
-                    Cart.create({ userId })
-                        .then(cart => {
-                            res.status(201).json(cart)
-                        })
-                        .catch(next)
-                }
+                else return Cart.create({ userId })
+            })
+            .then(cart => {
+                res.status(201).json(cart)
             })
             .catch(next)
     }
@@ -56,28 +53,27 @@ class CartController {
 
         Product.findById(productId)
             .then(product => {
-                if (product) {
+                if (!product) {
+                    next({
+                        status: 404,
+                        message: `Product id is invalid!`
+                    })
+                } else {
                     productInCart = product
 
-                    Cart.findOne({ userId, status: 'unpaid' })
-                        .then(cart => {
-
-                            cart.items.push({
-                                productId: productInCart._id,
-                                qty
-                            })
-                            
-                            cart.save()
-                                .then(cart => {
-                                    res.status(200).json(cart)
-                                })
-                                .catch(next)
-                        })
-                        .catch(next)
-                } else next({
-                    status: 404,
-                    message: `Product id is invalid!`
+                    return Cart.findOne({ userId, status: 'unpaid' })
+                }
+            })
+            .then(cart => {
+                cart.items.push({
+                    productId: productInCart._id,
+                    qty
                 })
+
+                cart.save()
+            })
+            .then(cart => {
+                res.status(200).json(cart)
             })
             .catch(next)
     }
@@ -94,11 +90,11 @@ class CartController {
                         el.qty = qty
                     }
                 })
-                cart.save()
-                    .then(cart => {
-                        res.status(200).json(cart)
-                    })
-                    .catch(next)
+                
+                return cart.save()
+            })
+            .then(cart => {
+                res.status(200).json(cart)
             })
             .catch(next)
     }
@@ -116,11 +112,11 @@ class CartController {
                         cart.items.splice(index, 1)
                     }
                 })
-                cart.save()
-                    .then(cart => {
-                        res.status(200).json({ deletedProduct })
-                    })
-                    .catch(next)
+
+                return cart.save()
+            })
+            .then(cart => {
+                res.status(200).json({ deletedProduct })
             })
             .catch(next)
     }
@@ -143,7 +139,7 @@ class CartController {
     static delete(req, res, next) {
         const { id } = req.params
 
-        Cart.findById(id)
+        Cart.findById(id).populate('items.productId')
             .then(cart => {
                 return cart.delete()
             })
