@@ -17,7 +17,7 @@
                     <div class="w-5/12 flex justify-center my-2"> {{ cart.status }} </div>
                     <div class="w-2/12 flex justify-center items-center my-2 pr-12">
                         <button
-                            v-if="cart.status !== 'shipped'"
+                            v-if="cart.status === 'paid'"
                             @click.prevent="processOrder(cart._id)"
                             class="flex justify-center mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white p-2 border border-green-500 hover:border-transparent rounded">
                             PROCESS

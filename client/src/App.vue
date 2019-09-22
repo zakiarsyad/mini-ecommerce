@@ -29,7 +29,8 @@
                 @deleteCart="deleteCart"
                 @getAdminCart="getAdminCart"
                 @processOrder="processOrder"
-                @payCart="payCart"/>
+                @payCart="payCart"
+                @receiveProduct="receiveProduct"/>
         </div>
         <pageFooter 
             id="pageFooter"/>
@@ -308,7 +309,9 @@ export default {
                 })
                 .then(() => {
                     this.loading = false
-                    this.$router.push('/cart/checkout')
+                    this.$toast.open('confirmation success')
+                    this.$router.push('/history')
+                    // this.$router.push('/cart/checkout')
                 })
                 .catch(err => {
                     this.loading = false
@@ -369,7 +372,13 @@ export default {
             })
                 .then(({ data }) => {
                     this.loading = false
-                    this.allCart = data
+                    const userCart = []
+
+                    data.forEach(cart => {
+                        if(cart.status !== 'unpaid') userCart.push(cart)
+                    })
+
+                    this.allCart = userCart
                 })
                 .catch(err => {
                     this.loading = false
@@ -435,6 +444,37 @@ export default {
                     this.loading = false
                     this.$nextTick(() => {
                         this.getAdminCart()
+                    })
+                    this.$nextTick(() => {
+                        this.getAllCart()
+                    })
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$router.push('/cart')
+                })
+        },
+        receiveProduct(id) {
+            this.loading = true
+            const token = localStorage.getItem('token')
+            
+            axios({
+                method: `patch`,
+                url: `${this.server}/carts/${id}`,
+                headers: {
+                    token: token
+                },
+                data: {
+                    status: 'completed'
+                }
+            })
+                .then(({ data }) => {
+                    this.loading = false
+                    this.$nextTick(() => {
+                        this.getAdminCart()
+                    })
+                    this.$nextTick(() => {
+                        this.getAllCart()
                     })
                 })
                 .catch(err => {

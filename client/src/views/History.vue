@@ -26,6 +26,17 @@
                             class="flex justify-center mt-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white p-2 border border-red-500 hover:border-transparent rounded">
                             <i class="fas fa-times"></i>
                         </button>
+                        <div 
+                            v-if="cart.status === 'paid'"
+                            class="text-green-700 text-center">
+                            we're processing your order
+                        </div>
+                        <button 
+                            v-if="cart.status === 'shipped'"
+                            @click.prevent="receiveProduct(cart._id)"
+                            class="flex justify-center mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white p-2 border border-green-500 hover:border-transparent rounded">
+                            RECEIVED
+                        </button>
                     </div>
                 </div>
 
@@ -82,6 +93,9 @@ export default {
         },
         payCart(id) {
             this.$emit('payCart', id)
+        },
+        receiveProduct(id) {
+            this.$emit('receiveProduct', id)
         }
     },
     mounted: function() {
