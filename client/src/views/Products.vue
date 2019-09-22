@@ -1,18 +1,17 @@
 <template>
     <div>
-        <banner/>
+        <!-- <banner/> -->
         <div class="w-10/12 mx-auto my-12 flex flex-wrap">
             <div 
                 v-for="(product,index) in products" 
                 :key="index" 
-                class="w-3/12">
+                class="w-3/12 cursor-pointer">
                 <product 
                     :product="product"
+                    @addToCart="addToCart"
                     class="m-3"></product>
             </div>
         </div>
-        <router-view
-            @addToCart="addToCart"/>
     </div>
 </template>
 
@@ -30,11 +29,8 @@ export default {
         'products'
     ],
     methods: {
-        addToCart () {
-        this.$toast.open('Success add product to cart')
-        alert('masuk products')
-        this.$emit('addToCart')
-        this.$router.push('/products')
+        addToCart (amount, selectedProduct) {
+            this.$emit('addToCart', amount, selectedProduct)
         }
     }
 }

@@ -5,30 +5,45 @@
         <div id="detail" class="shadow bg-white fixed z-20 rounded">
             <div class="w-10/12 mx-auto my-12 flex">
                 <div class="w-6/12">
-                    <div class="product overflow-hidden shadow-lg">
-                        <img class="w-full" src="https://cdn-images-1.medium.com/max/1200/1*yeAO-nwsAqnzr7k-zoDkoQ.png" alt="Sunset in the mountains">
+                    <div class="product overflow-hidden shadow-lg rounded">
+                        <img class="w-full" :src="productDetail.image" >
                     </div>
                 </div>
                 <div class="w-1/12"></div>
                 <div class="w-5/12">
-                    {{ product }}
-                    harusnya muncul
-                    <h1 class="h-20 text-5xl font-bold">Board Short</h1>
-                    <div class="qty w-full rounded py-2 mt-2 flex justify-between border">
-                        <button @click.prevent="minus" class="focus:outline-none"><i class="fas fa-minus px-3"></i></button>
-                        <div>{{ amount }}</div>
-                        <button @click.prevent="add" class="focus:outline-none"><i class="fas fa-plus px-3"></i></button>
+                    <div class="flex justify-center relative">
+                        <h1 class="h-20 text-5xl font-bold mb-12">{{ productDetail.name }}</h1>
+                        <button
+                            @click.prevent="backToProducts"
+                            class="absolute top-0 right-0 rounded-lg flex justify-center focus:outline ou bg-transparent border border-black p-2 mt-6 focus:outline-none hover:bg-black hover:text-white">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <button @click.prevent="addToCart" class="w-full rounded py-2 mt-2 add-to-cart focus:outline-none">Add to cart</button>
+                    
+                    <div class="qty w-full rounded py-2 mt-2 flex justify-between border">
+                        <button 
+                            @click.prevent="minus" 
+                            class="focus:outline-none">
+                            <i class="fas fa-minus px-3"></i></button>
+                        <div>{{ amount }}</div>
+                        <button 
+                            @click.prevent="add" 
+                            class="focus:outline-none">
+                            <i class="fas fa-plus px-3"></i></button>
+                    </div>
+                    <button 
+                        @click="addToCart" 
+                        class="mt-2 w-full bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">
+                        ADD TO CART</button>
                     <div class="flex mt-8">
                         <p class="w-3/12 ">Price</p>
                         <p class="w-1/12">:</p>
-                        <p class="w-8/12">$120</p>
+                        <p class="w-8/12">USD ${{ productDetail.price }}</p>
                     </div>
                     <div class="flex">
                         <p class="w-3/12">Description</p>
                         <p class="w-1/12">:</p>
-                        <p class="w-8/12">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                        <p class="w-8/12">{{ productDetail.description }}</p>
                     </div>
                 </div>
             </div>
@@ -39,10 +54,11 @@
 <script>
 export default {
   name: 'productdetail',
-  props: ['product'],
+  props: ['productDetail'],
   data () {
     return {
-      amount: 1
+      amount: 1,
+      selectedProduct: null
     }
   },
   methods: {
@@ -50,19 +66,26 @@ export default {
       this.amount += 1
     },
     minus () {
-      if (this.amount > 0) this.amount -= 1
+      if (this.amount > 1) this.amount -= 1
     },
     backToProducts () {
+      this.$emit('backToProducts')
       this.$router.push('/products')
     },
     addToCart () {
-      this.$emit('addToCart')
+      this.selectedProduct = this.productDetail
+      this.$emit('addToCart', this.amount, this.selectedProduct)
     }
   }
 }
 </script>
 
 <style scoped>
+
+.product {
+    height: 450px;
+    widows: 450px;
+}
 
 .add-to-cart {
     background-color: #41B882;

@@ -1,4 +1,4 @@
-# Ecommerce with Express and TDD
+# 	Ecommerce with Express and TDD
 
 
 
@@ -30,7 +30,8 @@ Response :
 
 ```
 {
-		"token" : "aksjdlkajdakdkapodkapd.........."
+		"token" : "aksjdlkajdakdkapodkapd..........",
+		"role" : "customer"
 }
 ```
 
@@ -70,6 +71,27 @@ Response :
 ]
 ```
 
+### `GET /products/:id`
+
+| Route           | HTTP  | Headers        | Body   | Description          | Additional Info |
+| --------------- | ----- | -------------- | ------ | -------------------- | --------------- |
+| `/products/:id` | `GET` | `token:String` | `none` | Get a single product |                 |
+
+Status : `200`
+Response :
+
+```
+{
+    "_id" : "123",
+    "productName" : "sendal gunung",
+    "price" : 1000,
+    "category" : "sendal",
+    "image" : "http://storage.google.com",
+    "stock" : 10
+    "userId" : "123"
+}
+```
+
 ### `POST /products`
 
 | Route       | HTTP   | Headers        | Body                                                         | Description        | Additional Info         |
@@ -91,28 +113,7 @@ Response :
 }
 ```
 
-### `GET /products/:id`
-
-| Route           | HTTP  | Headers        | Body   | Description          | Additional Info         |
-| --------------- | ----- | -------------- | ------ | -------------------- | ----------------------- |
-| `/products/:id` | `GET` | `token:String` | `none` | Get a single product | Authentication required |
-
-Status : `200`
-Response :
-
-```
-{
-    "_id" : "123",
-    "productName" : "sendal gunung",
-    "price" : 1000,
-    "category" : "sendal",
-    "image" : "http://storage.google.com",
-    "stock" : 10
-    "userId" : "123"
-}
-```
-
-### `PATCH /products/:id`
+### PATCH /products/:id`
 
 | Route           | HTTP    | Headers        | Body                                                         | Description                  | Additional Info                           |
 | --------------- | ------- | -------------- | ------------------------------------------------------------ | ---------------------------- | ----------------------------------------- |
@@ -160,9 +161,9 @@ Response :
 
 ### `GET /carts`
 
-| Route    | HTTP  | Headers        | Body   | Description   | Additional Info                           |
-| -------- | ----- | -------------- | ------ | ------------- | ----------------------------------------- |
-| `/carts` | `GET` | `token:String` | `none` | Create a cart | Authentication and authorization required |
+| Route    | HTTP  | Headers        | Body   | Description              | Additional Info         |
+| -------- | ----- | -------------- | ------ | ------------------------ | ----------------------- |
+| `/carts` | `GET` | `token:String` | `none` | Get a user's unpaid cart | Authentication required |
 
 Status : `200`
 Response :
@@ -198,9 +199,9 @@ Response :
 
 ### `POST /carts`
 
-| Route    | HTTP   | Headers        | Body   | Description   | Additional Info                           |
-| -------- | ------ | -------------- | ------ | ------------- | ----------------------------------------- |
-| `/carts` | `POST` | `token:String` | `none` | Create a cart | Authentication and authorization required |
+| Route    | HTTP   | Headers        | Body   | Description   | Additional Info         |
+| -------- | ------ | -------------- | ------ | ------------- | ----------------------- |
+| `/carts` | `POST` | `token:String` | `none` | Create a cart | Authentication required |
 
 Status : `201` ( if there is no cart with appropriate userId and unpaid status  )
 Response :
@@ -208,12 +209,12 @@ Response :
 ```
 {
     "status": "unpaid",
-    "_id": "5d800a7fd59c36177c8227e9",
-    "userId": "5d7f7f64e58ee6108f417344",
+    "_id": "5d85caf91404a562f0c6e7cc",
+    "userId": "5d85caf91404a562f0c6e7cb",
     "items": [],
-    "createdAt": "2019-09-16T22:19:43.012Z",
-    "updatedAt": "2019-09-16T22:19:43.012Z",
-    "__v": 0
+    "createdAt": "2019-09-21T07:02:17.898Z",
+    "updatedAt": "2019-09-21T08:18:02.376Z",
+    "__v": 6
 }
 ```
 
@@ -223,20 +224,20 @@ Response :
 ```
 {
     "status": "unpaid",
-    "_id": "5d800a7fd59c36177c8227e9",
-    "userId": "5d7f7f64e58ee6108f417344",
+    "_id": "5d85caf91404a562f0c6e7cc",
+    "userId": "5d85caf91404a562f0c6e7cb",
     "items": [],
-    "createdAt": "2019-09-16T22:19:43.012Z",
-    "updatedAt": "2019-09-16T22:19:43.012Z",
-    "__v": 0
+    "createdAt": "2019-09-21T07:02:17.898Z",
+    "updatedAt": "2019-09-21T08:18:02.376Z",
+    "__v": 6
 }
 ```
 
 ### `POST /carts/product/:id`
 
-| Route                | HTTP   | Headers        | Body   | Description                  | Additional Info                           |
-| -------------------- | ------ | -------------- | ------ | ---------------------------- | ----------------------------------------- |
-| `/carts/product/:id` | `POST` | `token:String` | `none` | Add a product to user's cart | Authentication and authorization required |
+| Route                | HTTP   | Headers        | Body         | Description                  | Additional Info                           |
+| -------------------- | ------ | -------------- | ------------ | ---------------------------- | ----------------------------------------- |
+| `/carts/product/:id` | `POST` | `token:String` | `qty:Number` | Add a product to user's cart | Authentication and authorization required |
 
 Status : `200`
 Response :
@@ -244,22 +245,69 @@ Response :
 ```
 {
     "status": "unpaid",
-    "_id": "5d800a7fd59c36177c8227e9",
-    "userId": "5d7f7f64e58ee6108f417344",
+    "_id": "5d85caf91404a562f0c6e7cc",
+    "userId": "5d85caf91404a562f0c6e7cb",
     "items": [
         {
-            "_id": "5d800a81d59c36177c8227ea",
-            "productId": "5d7f9f03db6198156b231bff",
+            "_id": "5d85cfd51404a562f0c6e7cd",
+            "productId": "5d85a0178cbce55fb31ff93b",
+            "qty": 3
+        },
+        {
+            "_id": "5d85d03c1404a562f0c6e7ce",
+            "productId": "5d85a0388cbce55fb31ff93c",
             "qty": 2
+        },
+        {
+            "_id": "5d85d0701404a562f0c6e7cf",
+            "productId": "5d85a0178cbce55fb31ff93b",
+            "qty": 5
         }
     ],
-    "createdAt": "2019-09-16T22:19:43.012Z",
-    "updatedAt": "2019-09-16T22:19:45.249Z",
-    "__v": 1
+    "createdAt": "2019-09-21T07:02:17.898Z",
+    "updatedAt": "2019-09-21T08:18:02.376Z",
+    "__v": 6
 }
 ```
 
-### `DELETE /carts/product/:id`
+### `PATCH /carts/product/:id`
+
+| Route                | HTTP    | Headers        | Body   | Description                             | Additional Info                           |
+| -------------------- | ------- | -------------- | ------ | --------------------------------------- | ----------------------------------------- |
+| `/carts/product/:id` | `PATCH` | `token:String` | `none` | Edit confirmation status to user's cart | Authentication and authorization required |
+
+Status : `200`
+Response :
+
+```
+{
+    "status": "unpaid",
+    "_id": "5d85caf91404a562f0c6e7cc",
+    "userId": "5d85caf91404a562f0c6e7cb",
+    "items": [
+        {
+            "_id": "5d85cfd51404a562f0c6e7cd",
+            "productId": "5d85a0178cbce55fb31ff93b",
+            "qty": 3
+        },
+        {
+            "_id": "5d85d03c1404a562f0c6e7ce",
+            "productId": "5d85a0388cbce55fb31ff93c",
+            "qty": 2
+        },
+        {
+            "_id": "5d85d0701404a562f0c6e7cf",
+            "productId": "5d85a0178cbce55fb31ff93b",
+            "qty": 5
+        }
+    ],
+    "createdAt": "2019-09-21T07:02:17.898Z",
+    "updatedAt": "2019-09-21T08:18:02.376Z",
+    "__v": 6
+}
+```
+
+### DELETE /carts/product/:id`
 
 | Route                | HTTP     | Headers        | Body   | Description                       | Additional Info                           |
 | -------------------- | -------- | -------------- | ------ | --------------------------------- | ----------------------------------------- |
@@ -270,10 +318,7 @@ Response :
 
 ```
 {
-    "_id" : "1234567890",
-    "items" : [ ],
-    "status" : "unpaid",
-    "userId" : "123"
+		"deletedProduct" : "kopi"
 }
 ```
 

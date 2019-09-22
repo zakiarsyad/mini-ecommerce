@@ -10,10 +10,10 @@ const expect = chai.expect
 
 chai.use(chaiHttp);
 
-let token, productId
+let token, product
 const invalidToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZDdmNjVlNTE4ZmE0NTBkNjIwY2FmYjciLCJlbWFpbCI6Inpha2lAbWFpbC5jb20iLCJpYXQiOjE1N'
 
-describe('#login()', function () {
+describe('Login a user', function () {
     it('should return a token when calling the POST method', function (done) {
         chai.request(app)
             .post('/users/login')
@@ -32,7 +32,14 @@ describe('#login()', function () {
 })
 
 describe('Product', function () {
-   describe('GET /products', function () {
+    before(function (done) {
+        mongoose.connect(`mongodb://localhost:27017/ecommerce-test`, { useNewUrlParser: true, useUnifiedTopology: true }, function () {
+            mongoose.connection.dropCollection('products')
+            done()
+        })
+    })
+
+    describe('GET /products', function () {
         describe('success get all products', function () {
             it('should return an array with status code 200', function (done) {
                 chai.request(app)
@@ -53,36 +60,56 @@ describe('Product', function () {
                     .post('/products')
                     .set('token', token)
                     .send({
-                        productName: 'Test product',
+                        name: 'Test product',
                         price: 10000,
                         category: 'Test sategory',
-                        stock: 10,
-                        image: 'no image',
-                        userId: "5d84d38075035c4d334b663c"
+                        stock: 10
                     })
                     // .attach('image', fs.readFileSync('./hactiv8.jpg'), 'hactiv8.jpg')
                     .end(function (err, res) {
                         expect(err).to.be.null
                         expect(res).to.have.status(201)
+                        expect(res).to.have.an('object')
+                        product = res.body
                         done()
                     })
             })
         })
 
-        describe('fail add a product', function () {
-            it('Should return an error with status code 500', function (done) {
+        describe('there is no token access', function () {
+            it('Should return an array of errors message with status code 403', function (done) {
                 chai.request(app)
-                .post('/products')
-                .set('token', token)
-                .send({
-                    productName: '',
-                    price: '',
-                    category: '',
-                    stock: '',
-                })
-                .end(function (err, res) {
+                    .post('/products')
+                    .send({
+                        name: 'Test product',
+                        price: 10000,
+                        category: 'Test sategory',
+                        stock: 10
+                    })
+                    .end(function (err, res) {
                         expect(err).to.be.null
-                        expect(res).to.have.status(500)
+                        expect(res).to.have.status(403)
+                        expect(res.body.errors[0]).to.equal('Please login first')
+                        done()
+                    })
+            })
+        })
+
+        describe('invalid token access', function () {
+            it('Should return an array of errors message with status code 403', function (done) {
+                chai.request(app)
+                    .post('/products')
+                    .set('token', invalidToken)
+                    .send({
+                        name: 'Test product',
+                        price: 10000,
+                        category: 'Test sategory',
+                        stock: 10
+                    })
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(403)
+                        expect(res.body.errors[0]).to.equal('Please login first')
                         done()
                     })
             })
@@ -91,9 +118,135 @@ describe('Product', function () {
 
     describe('GET /product/:id', function () {
         describe('success get single product', function () {
-            it('should return an object of product', function (done) {
+            it('should return an object with status code 200', function (done) {
                 chai.request(app)
-                    .get(`/product/${productId}`)
+                    .get(`/products/${product._id}`)
+                    .set('token', token)
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(200)
+                        expect(res).to.have.an('object')
+                        done()
+                    })
+            })
+        })
+
+        describe('invalid product id', function () {
+            it('should return null', function (done) {
+                chai.request(app)
+                    .get(`/products/111111111111111111111111`)
+                    .set('token', token)
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(200)
+                        done()
+                    })
+            })
+        })
+
+        describe('there is no token access', function () {
+            it('Should return an array of errors message with status code 403', function (done) {
+                chai.request(app)                  
+                    .get(`/products/${product._id}`)
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(403)
+                        expect(res.body.errors[0]).to.equal('Please login first')
+                        done()
+                    })
+            })
+        })
+
+        describe('invalid token access', function () {
+            it('Should return an array of errors message with status code 403', function (done) {
+                chai.request(app)
+                    .get(`/products/${product._id}`)
+                    .set('token', invalidToken)
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(403)
+                        expect(res.body.errors[0]).to.equal('Please login first')
+                        done()
+                    })
+            })
+        })
+    })
+
+    describe('PATCH /products/:id', function () {
+        describe('success edit a product', function () {
+            it('should return an object with status 200', function (done) {
+                chai.request(app)
+                    .patch(`/products/${product._id}`)
+                    .set('token', token)
+                    .send({
+                        name: 'Test product update',
+                        price: 10000,
+                        category: 'Test category update',
+                        stock: 10
+                    })
+                    // .attach('image', fs.readFileSync('hactiv8.jpg'), 'hactiv8.jpg')
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(200)
+                        expect(res).to.be.an('object')
+                        done()
+                    })
+            })
+        })
+
+        describe("invalid product id", function () {
+            it('Should return an array of errors message with status code 404 ', function (done) {
+                chai.request(app)
+                    .patch(`/products/111111111111111111111111`)
+                    .set('token', token)
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(404)
+                        expect(res.body.errors[0]).to.equal('product id is invalid')
+                        done()
+                    })
+            })
+        })
+
+        describe('there is no token access', function () {
+            it('Should return an errors message with status code 403', function (done) {
+                chai.request(app)
+                    .patch(`/products/${product._id}`)
+                    .send({
+                        name: 'Test product update',
+                        price: 10000,
+                        category: 'Test category update',
+                        stock: 10
+                    })
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(403)
+                        expect(res.body.errors[0]).to.equal('Please login first')
+                        done()
+                    })
+            })
+        })
+
+        describe('invalid token access', function () {
+            it('Should return an errors message with status code 403', function (done) {
+                chai.request(app)
+                    .patch(`/products/${product._id}`)
+                    .set('token', invalidToken)
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(403)
+                        expect(res.body.errors[0]).to.equal('Please login first')
+                        done()
+                    })
+            })
+        })
+    })
+
+    describe('DELETE /products/:id', function () {
+        describe('success delete a product', function () {
+            it('should return an object with status 200', function (done) {
+                chai.request(app)
+                    .delete(`/products/${product._id}`)
                     .set('token', token)
                     .end(function (err, res) {
                         expect(err).to.be.null
@@ -103,44 +256,60 @@ describe('Product', function () {
                     })
             })
         })
-    })
 
-    describe('PATCH /product/:id', function () {
-        describe('success edit a product', function () {
-            it('should return an object of product', function (done) {
+        describe("invalid product id", function () {
+            it('Should return an array of errors message with status code 404 ', function (done) {
                 chai.request(app)
-                    .patch(`/product/${productId}`)
-                    .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZDgwM2YzZTI1ODEyNzIxYzBmYTZkZGYiLCJlbWFpbCI6Inpha2lAbWFpbC5jb20iLCJpYXQiOjE1Njg2ODU4ODd9.3Qbj76Fe57D527a-nqs-Z5UQtxUt8Fzik2sDxqrjd7g')
-                    .send({
-                        productName: 'Test product update',
-                        price: 10000,
-                        category: 'Test sategory update',
-                        stock: 10,
-                    })
-                    .attach('image', fs.readFileSync('hactiv8.jpg'), 'hactiv8.jpg')
+                    .delete(`/products/111111111111111111111111`)
+                    .set('token', token)
                     .end(function (err, res) {
                         expect(err).to.be.null
-                        expect(res).to.have.status(200)
-                        expect(res).to.be.an('object')
+                        expect(res).to.have.status(404)
+                        expect(res.body.errors[0]).to.equal('product id is invalid')
                         done()
                     })
             })
         })
-    })
 
-    describe('PATCH /product/:id', function () {
-        describe('success edit a product', function () {
-            it('should return an object of product', function (done) {
+        describe('there is no token access', function () {
+            it('Should return an errors message with status code 403', function (done) {
                 chai.request(app)
-                    .patch(`/product/${productId}`)
-                    .set('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZDgwM2YzZTI1ODEyNzIxYzBmYTZkZGYiLCJlbWFpbCI6Inpha2lAbWFpbC5jb20iLCJpYXQiOjE1Njg2ODU4ODd9.3Qbj76Fe57D527a-nqs-Z5UQtxUt8Fzik2sDxqrjd7g')
+                    .delete(`/products/${product._id}`)
                     .end(function (err, res) {
                         expect(err).to.be.null
-                        expect(res).to.have.status(200)
-                        expect(res).to.be.an('object')
+                        expect(res).to.have.status(403)
+                        expect(res.body.errors[0]).to.equal('Please login first')
                         done()
                     })
             })
         })
+
+        describe('invalid token access', function () {
+            it('Should return an errors message with status code 403', function (done) {
+                chai.request(app)
+                    .delete(`/products/${product._id}`)
+                    .set('token', invalidToken)
+                    .end(function (err, res) {
+                        expect(err).to.be.null
+                        expect(res).to.have.status(403)
+                        expect(res.body.errors[0]).to.equal('Please login first')
+                        done()
+                    })
+            })
+        })
+
+        // describe('success get single product', function () {
+        //     it('should return an object with status code 200', function (done) {
+        //         chai.request(app)
+        //             .get(`/products/${product._id}`)
+        //             .set('token', token)
+        //             .end(function (err, res) {
+        //                 expect(err).to.be.null
+        //                 expect(res).to.have.status(200)
+        //                 expect(res).to.have.an('object')
+        //                 done()
+        //             })
+        //     })
+        // })
     })
 })

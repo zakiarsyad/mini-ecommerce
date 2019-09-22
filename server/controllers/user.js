@@ -14,7 +14,7 @@ class UserController {
                     email
                 })
 
-                res.status(201).json({ token })
+                res.status(201).json({ token, role })
             })
             .catch(next)
     }
@@ -27,10 +27,11 @@ class UserController {
                 if (user && compareHash(password, user.password)) {
                     const token = generateToken({
                         userId: user._id,
+                        role: user.role,
                         email
                     })
 
-                    res.status(200).json({ token })
+                    res.status(200).json({ token, role: user.role })
                 } else next({
                     status: 403,
                     message: `Invalid username / password!`

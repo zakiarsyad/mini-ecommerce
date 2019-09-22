@@ -1,22 +1,25 @@
 <template>
     <div>
-        <div class="max-w-xs rounded ">
-            <div class="product overflow-hidden shadow-lg">
+        <div @click.prevent="getDetail(product)" class="max-w-xs rounded ">
+            <div class="product overflow-hidden shadow-lg h-64 w-64 rounded-lg">
                 <img 
                     class="w-full" 
-                    src="https://cdn-images-1.medium.com/max/1200/1*yeAO-nwsAqnzr7k-zoDkoQ.png">
+                    :src="product.image">
             </div>
-            <div href="#" class="px-6 py-4">
-                <router-link 
-                    :to="path"
-                    class=" mb-2">{{ product.productName }}
-                </router-link>
+            <div class="px-6 py-4">
+                <a 
+                    class=" mb-2">{{ product.name }}
+                </a>
                 <div 
                     class="text-base mb-2 text-red-600 font-semibold">
                     USD ${{ product.price }}
                 </div>
             </div>
         </div>
+        <router-view
+            :productDetail="productDetail"
+            @addToCart="addToCart"
+            @backToProducts="backToProducts"/>
     </div>
 </template>
 
@@ -26,7 +29,20 @@ export default {
   props: ['product'],
   data() {
       return {
-          path: `/products/${this.product._id}`
+          path: `/products/${this.product._id}`,
+          productDetail: null
+      }
+  },
+  methods: {
+      getDetail(product) {
+          this.productDetail = product
+          this.$router.push(`/products/${product._id}`)
+      },
+      backToProducts() {
+          this.productDetail = null
+      },
+      addToCart(amount, selectedProduct) {
+          this.$emit('addToCart', amount, selectedProduct)
       }
   }
 }

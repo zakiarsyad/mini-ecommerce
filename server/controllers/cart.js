@@ -38,22 +38,28 @@ class CartController {
 
         Product.findById(productId)
             .then(product => {
-                productInCart = product
+                if (product) {
+                    productInCart = product
 
-                Cart.findOne({ userId, status: 'unpaid' })
-                    .then(cart => {
+                    Cart.findOne({ userId, status: 'unpaid' })
+                        .then(cart => {
 
-                        cart.items.push({
-                            productId: productInCart._id,
-                            qty
-                        })
-                        cart.save()
-                            .then(cart => {
-                                res.status(200).json(cart)
+                            cart.items.push({
+                                productId: productInCart._id,
+                                qty
                             })
-                            .catch(next)
-                    })
-                    .catch(next)
+                            
+                            cart.save()
+                                .then(cart => {
+                                    res.status(200).json(cart)
+                                })
+                                .catch(next)
+                        })
+                        .catch(next)
+                } else next({
+                    status: 404,
+                    message: `Product id is invalid!`
+                })
             })
             .catch(next)
     }
@@ -81,18 +87,20 @@ class CartController {
 
     static deleteProduct(req, res, next) {
         const { userId } = req.decode
-        const productId = req.params.id
+        const cartProductId = req.params.id
+        let deletedProduct = ''
 
-        Cart.findOne({ userId, status: 'unpaid' })
+        Cart.findOne({ userId, status: 'unpaid' }).populate('items.productId')
             .then(cart => {
                 cart.items.forEach((el, index) => {
-                    if (el.productId == productId) {
+                    if (el._id == cartProductId) {
+                        deletedProduct = el.productId.name
                         cart.items.splice(index, 1)
                     }
                 })
                 cart.save()
                     .then(cart => {
-                        res.status(200).json(cart)
+                        res.status(200).json({ deletedProduct })
                     })
                     .catch(next)
             })

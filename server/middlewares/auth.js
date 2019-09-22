@@ -26,6 +26,11 @@ function authorization(req, res, next) {
         .catch(next)
 }
 
+function adminAuthorization(req, res, next) {
+    if (req.decode.role === 'admin') next()
+    else next({ status: 401, message: `You are not authorized` })
+}
+
 function cartAuthorization(req, res, next) {
     const productId = req.params.id
     const userId = req.decode.userId
@@ -40,4 +45,4 @@ function cartAuthorization(req, res, next) {
         .catch(next)
 }
 
-module.exports = { authentication, authorization, cartAuthorization }
+module.exports = { authentication, authorization, adminAuthorization, cartAuthorization }

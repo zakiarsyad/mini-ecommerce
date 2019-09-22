@@ -2,35 +2,40 @@
     <nav class="p-4 flex items-center fixed w-full h-16 shadow">
         <router-link
             to="/"
-            class="px-2 no-underline">
+            class="px-2 no-underline mr-12">
             <i class="fab fa-vuejs fa-2x"></i>
         </router-link>
         <button
             to="/products"
             class="px-2 text-xl font-bold no-underline focus:outline-none"
-            :products="products"
             @click.prevent="getProducts"
             >PRODUCT</button>
         <input
-            v-if="isLogin"
             class="w-full rounded mx-4 focus:outline-none"
             type="text">
-        <i v-if="isLogin" class="fas fa-search"></i>
+        <i class="fas fa-search"></i>
         <router-link
-            v-if="isLogin"
+            to="/admin"
+            class="px-2">
+            <i v-if="isAdmin" class="<i fas fa-user-cog fa-1.5x"></i>
+        </router-link>
+        <router-link
             to="/cart"
             class="px-2">
-            <i class="fas fa-shopping-cart fa-1.5x"></i>
+            <i v-if="isLogin && !isAdmin" class="fas fa-shopping-cart fa-1.5x"></i>
         </router-link>
         <router-link
-            v-if="isLogin"
             to="/profile"
             class="px-2">
-            <i class="far fa-user-circle"></i>
+            <i v-if="isLogin && !isAdmin" class="far fa-user-circle"></i>
         </router-link>
         <button
+            v-if="!isLogin"
+            class="rounded-lg flex justify-center focus:outline ou bg-transparent border border-black px-2 focus:outline-none hover:bg-black hover:text-white"
+            @click.prevent="toLoginPage">Login</button>
+        <button
             v-if="isLogin"
-            class="px-2"
+            class="rounded-lg flex justify-center focus:outline ou bg-transparent border border-black px-2 focus:outline-none hover:bg-black hover:text-white"
             @click.prevent="logout">Logout</button>
     </nav>
 </template>
@@ -40,6 +45,7 @@ export default {
     name: 'navbar',
     props: [
         'isLogin', 
+        'isAdmin',
         'user', 
         'products'
     ],
@@ -52,6 +58,9 @@ export default {
         },
         getProducts() {
             this.$emit('getProducts')
+        },
+        toLoginPage() {
+            this.$emit('toLoginPage')
         }
     }
 }

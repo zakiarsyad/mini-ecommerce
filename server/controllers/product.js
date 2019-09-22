@@ -12,19 +12,20 @@ class ProductController {
     }
 
     static addProduct(req, res, next) {
-        const { productName, price, category, stock } = req.body
-        const { userId } = req.decode
-        const image = req.file.cloudStoragePublicUrl
+        let { name, price, category, stock, description } = req.body
+        let { userId } = req.decode
+        let image = ''
+        if (req.file) image = req.file.cloudStoragePublicUrl
         
-        Product.create({ productName, price, category, stock, userId, image })
+        Product.create({ name, price, category, stock, userId, image, description })
             .then(product => {
-                res.status(200).json(product)
+                res.status(201).json(product)
             })
             .catch(next)
     }
 
     static getProduct(req, res, next) {
-        const { id } = req.params
+        let { id } = req.params
 
         Product.findById(id)
             .then(product => {
@@ -34,19 +35,19 @@ class ProductController {
     }
 
     static editProduct(req, res, next) {
-        const { id } = req.params
-        const { productName, price, category, stock } = req.body
+        let { id } = req.params
+        let { name, price, category, stock } = req.body
 
         Product.findById(id)
             .then(product => {
-                if ( productName )product.productName = productName
+                if ( name )product.name = name
                 if ( price ) product.price = price
                 if ( category ) product.category = category
-                if (stock) product.stock = stock
-                if (req.file) {
+                if ( stock ) product.stock = stock
+                if ( req.file ) {
                     const CLOUD_BUCKET = process.env.CLOUD_BUCKET
                     
-                    const storage = new Storage({
+                    let storage = new Storage({
                         projectId: process.env.GCLOUD_PROJECT,
                         keyFilename: process.env.KEYFILE_PATH
                     })
@@ -71,25 +72,27 @@ class ProductController {
     }
 
     static deleteProduct(req, res, next) {
-        const { id } = req.params
+        let { id } = req.params
 
         Product.findById(id)
             .then(product => {
-                const CLOUD_BUCKET = process.env.CLOUD_BUCKET
-
-                const storage = new Storage({
-                    projectId: process.env.GCLOUD_PROJECT,
-                    keyFilename: process.env.KEYFILE_PATH
-                })
-
-                let deleteFile = product.image
-
-                let filename = deleteFile.replace(/(https:\/\/storage.googleapis.com\/storage-ecommerce.zakiarsyad.com\/)/, '')
-
-                storage
-                    .bucket(CLOUD_BUCKET)
-                    .file(filename)
-                    .delete()
+                if (product.image) {
+                    const CLOUD_BUCKET = process.env.CLOUD_BUCKET
+    
+                    let storage = new Storage({
+                        projectId: process.env.GCLOUD_PROJECT,
+                        keyFilename: process.env.KEYFILE_PATH
+                    })
+    
+                    let deleteFile = product.image
+    
+                    let filename = deleteFile.replace(/(https:\/\/storage.googleapis.com\/storage-ecommerce.zakiarsyad.com\/)/, '')
+    
+                    storage
+                        .bucket(CLOUD_BUCKET)
+                        .file(filename)
+                        .delete()
+                }
                 
                 product.delete()
                     .then(product => {

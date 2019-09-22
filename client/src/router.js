@@ -8,6 +8,9 @@ import ProductDetail from './views/ProductDetail.vue'
 import Login from './views/Login.vue'
 import Register from './views/Register.vue'
 import AddToCart from './views/AddToCart.vue'
+import Checkout from './views/Checkout.vue'
+import AdminPage from './views/AdminPage.vue'
+import AddProduct from './views/AddProduct.vue'
 
 Vue.use(Router)
 
@@ -19,6 +22,16 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/admin',
+      name: 'adminpage',
+      component: AdminPage,
+      children: [{
+        path: '/admin/addproduct',
+        name: 'addproduct',
+        component: AddProduct
+      }]
     },
     {
       path: '/products',
@@ -43,7 +56,12 @@ export default new Router({
     {
       path: '/cart',
       name: 'cart',
-      component: Cart
+      component: Cart,
+      children: [{
+        path: '/cart/checkout',
+        name: 'checkout',
+        component: Checkout
+      }]
     },
     {
       path: '/login',

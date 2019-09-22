@@ -10,7 +10,7 @@ const expect = chai.expect
 chai.use(chaiHttp);
 
 describe('User', function () {
-    describe('#register()', function () {
+    describe('POST /users/register', function () {
         before(function (done) {
             mongoose.connect(`mongodb://localhost:27017/ecommerce-test`, { useNewUrlParser: true, useUnifiedTopology: true }, function () {
                 mongoose.connection.dropCollection('users')
@@ -80,7 +80,7 @@ describe('User', function () {
         })
     })
 
-    describe('#login()', function () {
+    describe('POST /users/login', function () {
         it('should return a token when calling the POST method', function (done) {
             chai.request(app)
                 .post('/users/login')
@@ -106,7 +106,7 @@ describe('User', function () {
                 .end(function (err, res) {
                     expect(err).to.be.null
                     expect(res).to.have.status(403)
-                    expect(res.body).to.equal('Invalid username / password!')
+                    expect(res.body.errors[0]).to.equal('Invalid username / password!')
                     done()
                 })
         })
@@ -121,7 +121,7 @@ describe('User', function () {
                 .end(function (err, res) {
                     expect(err).to.be.null
                     expect(res).to.have.status(403)
-                    expect(res.body).to.equal('Invalid username / password!')
+                    expect(res.body.errors[0]).to.equal('Invalid username / password!')
                     done()
                 })
         })

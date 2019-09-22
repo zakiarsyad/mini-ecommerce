@@ -1,19 +1,30 @@
 <template>
     <div>
-        <navbar
-            :isLogin="isLogin"
-            :user="user"
-            @logout="logout"
-            @getProducts="getProducts"/>
-        <div class="h-16"></div>
-        <loader v-if="loading"></loader>
-        <router-view
-            :isLogin="isLogin"
-            :user="user"
-            :products="products"
-            @login="login"
-            @register="register"/>
-        <pageFooter v-if="isLogin" />
+        <div id="app">
+            <navbar
+                :isLogin="isLogin"
+                :isAdmin="isAdmin"
+                :user="user"
+                @logout="logout"
+                @getProducts="getProducts"
+                @toLoginPage="toLoginPage"
+                class="z-20"/>
+            <div class="h-16"></div>
+            <loader v-if="loading"></loader>
+            <router-view
+                :isLogin="isLogin"
+                :user="user"
+                :products="products"
+                :cart="cart"
+                :totalPrice="totalPrice"
+                @login="login"
+                @register="register"
+                @addToCart="addToCart"
+                @getCart="getCart"
+                @deleteFromCart="deleteFromCart"/>
+        </div>
+        <pageFooter 
+            id="pageFooter"/>
     </div>
 </template>
 
@@ -31,47 +42,67 @@ export default {
         loader
     },
     data () {
-      return {
-          server: `http://localhost:3000`,
-          isLogin: true,
-          user: {
-              email: '',
-              password: ''
-          },
-          loading: false,
-          alert: {
-              status: '',
-              msgs: []
-          },
-          products: []
-      }
+    return {
+        server: `http://localhost:3000`,
+        isLogin: false,
+        isAdmin: false,
+        user: {
+            email: '',
+            password: '',
+            role: ''
+        },
+        loading: false,
+        alert: {
+            status: '',
+            msgs: []
+        },
+        products: [],
+        cart: null,
+        totalPrice: 0
+    }
     },
     methods: {
         login (user) {
             this.loading = true
+            let token
 
             axios({
                 method: `post`,
                 url: `${this.server}/users/login`,
                 data: {
-                   email: this.user.email,
+                    email: this.user.email,
                     password: this.user.password
                 }
             })
+                .then(({ data }) => {
+                    token = data.token
+                    
+                    if( data.role === 'admin' ) this.isAdmin = true
+
+                        return axios({
+                            method: `post`,
+                            url: `${this.server}/carts`,
+                            headers: {
+                                token: data.token
+                            }
+                        })
+                    // }
+                })
                 .then(({ data }) => {
                     this.loading = false
                     this.isLogin = true
                     this.$toast.open('Login success')
                     this.$router.push('/')
-                    localStorage.setItem('token', data.token)
+                    localStorage.setItem('token', token)
                 })
                 .catch(err => {
                     this.loading = false
-                    this.$toast.error(err.response.data)
+                    this.$toast.error(err.response.data.errors)
                 })
         },
         register (user) {
             this.loading = true
+            let token
 
             axios({
                 method: `post`,
@@ -82,8 +113,19 @@ export default {
                 }
             })
                 .then(({ data }) => {
+                    token = data.token
+
+                    return axios({
+                        method: `post`,
+                        url: `${this.server}/carts`,
+                        headers: {
+                            token: data.token
+                        }
+                    })
+                })
+                .then(({ data }) => {
+                    localStorage.setItem('token', token)
                     this.loading = false
-                    localStorage.setItem('token', data.token)
                     this.isLogin = true
                     this.$router.push('/')
                     this.$toast.open('Registration success')
@@ -94,40 +136,122 @@ export default {
                         this.$toast.error(err.response.data.errors[i])
                     }
                 })
-      },
-      logout () {
-          this.user.email = ''
-          this.user.password = ''
-          this.isLogin = false
-          localStorage.removeItem('token')
-          this.$router.push('/login')
-          this.$toast.open('Byee. . .')
-      },
-      getProducts() {
-          this.loading = true
-          
-          axios({
-              method: `get`,
-              url: `${this.server}/products`
-          })
-              .then(({ data }) => {
-                  this.loading = false
-                  this.products = data
-                  this.$router.push('/products')
-              })
-              .catch(err => {
-                  this.loading = false
-                  this.$toast.error(err.response.data)
-              })
-      }
-  },
-  created: function () {
-      if (localStorage.getItem('token')) {
-          // this.$router.push('/')
-          this.isLogin = true
-          // this.getProducts()
-      }
-  }
+        },
+        logout () {
+            this.user.email = ''
+            this.user.password = ''
+            this.user.role = ''
+            this.isLogin = false
+            this.isAdmin = false
+            localStorage.removeItem('token')
+            this.$router.push('/login')
+            this.$toast.open('Byee. . .')
+        },
+        getProducts() {
+            this.loading = true
+            
+            axios({
+                method: `get`,
+                url: `${this.server}/products`
+            })
+                .then(({ data }) => {
+                    this.loading = false
+                    this.products = data
+
+                    this.$router.push('/products')
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$toast.error(err.response.data)
+                })
+        },
+        addToCart(amount, selectedProduct) {
+            this.loading = true
+
+            axios({
+                method: `post`,
+                url: `${this.server}/carts/product/${selectedProduct._id}`,
+                headers: {
+                    token: localStorage.getItem('token')
+                },
+                data: {
+                    qty: amount
+                }
+            })
+                .then(({ data }) => {
+                    this.loading = false
+                    this.$toast.open(`Added ${amount} of ${selectedProduct.name} to your cart`)
+                    this.$router.push('/products')
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$toast.error(err.response.data)
+                })
+        },
+        getCart() {
+            this.loading = true
+
+            axios({
+                method: `get`,
+                url: `${this.server}/carts`,
+                headers: {
+                    token: localStorage.getItem('token')
+                }
+            })
+                .then(({ data }) => {
+                    this.loading = false
+
+                    this.totalPrice = this.getTotalPrice(data.items)
+                    this.cart = data
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$toast.error(err.response.data)
+                })
+        },
+        getTotalPrice(items) {
+            let totalPrice = 0
+
+            items.forEach(item => {
+                totalPrice += (item.productId.price * item.qty)
+            })
+
+            return totalPrice
+        },
+        deleteFromCart(id) {
+            this.loading = true
+
+            axios({
+                method: `delete`,
+                url: `${this.server}/carts/product/${id}`,
+                headers: {
+                    token: localStorage.getItem('token')
+                }
+            })
+                .then(({ data }) => {
+                    this.$toast.open(`Success delete ${data.deletedProduct} from your cart`)
+                    this.loading = false
+                    this.$nextTick(() => {
+                        this.getCart()
+                    })
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$toast.error(err.response.data)
+                })
+        },
+        toLoginPage() {
+            this.$router.push('/login')
+        }
+    },
+    created: function () {
+        // if (localStorage.getItem('token')) {
+        //     this.isLogin = true
+        //     this.$router.push('/')
+        // } else {
+        //     this.$router.push('/login')
+        // }
+    }
 }
 </script>
 
@@ -135,7 +259,15 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap');
 
 * {
-  font-family: Roboto;
+    font-family: Roboto;
+}
+
+#app {
+    min-height: calc(100vh - 50px);
+}
+
+#pageFooter {
+    height: 50px;
 }
 
 </style>
