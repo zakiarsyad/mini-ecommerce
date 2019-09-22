@@ -35,16 +35,16 @@
 
 <script>
 export default {
-  name: 'register',
-  props: ['isLogin', 'user'],
-  methods: {
-    goToLoginPage () {
-      this.$router.push('/login')
-    },
-    register () {
-      this.$emit('register')
+    name: 'register',
+    props: ['isLogin', 'user'],
+    methods: {
+        goToLoginPage () {
+           this.$router.push('/login')
+        },
+        register () {
+            this.$emit('register')
+        }
     }
-  }
 }
 
 </script>

@@ -1,6 +1,6 @@
 
 const User = require('../models/user')
-const { generateToken } = require('../helpers/jwt')
+const { generateToken, verifyToken } = require('../helpers/jwt')
 const { compareHash } = require('../helpers/bcryptjs')
 
 class UserController {
@@ -38,6 +38,16 @@ class UserController {
                 })
             })
             .catch(next)
+    }
+
+    static checkToken(req, res, next) {
+        const { token } = req.headers
+            
+        try {
+            req.decode = verifyToken(token)
+            if (req.decode.role === 'admin') res.status(200).json({ isLogin: true, isAdmin: true })
+            else res.status(200).json({ isLogin: true, isAdmin: false })
+        } catch (err) { next({ status: 403, message: `Access token is invalid!` }) }
     }
 }
 

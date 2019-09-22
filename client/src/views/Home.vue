@@ -6,13 +6,12 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import banner from '@/components/Banner.vue'
 
 export default {
-  name: 'home',
-  components: {
-    banner
-  }
+    name: 'home',
+    components: {
+        banner
+    }
 }
 </script>

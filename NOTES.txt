@@ -1,4 +1,6 @@
-update dokumentasi tambah admin
+update dokumentasi tambah admin, checkToken
 update stock => if user checkout the product
 update product yang di beli
 ignore credential file (GOOGLE) => jelaskan di documentation
+banner belum ya tjoy
+testing router checkToken

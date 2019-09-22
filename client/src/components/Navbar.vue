@@ -7,13 +7,18 @@
         </router-link>
         <button
             to="/products"
-            class="px-2 text-xl font-bold no-underline focus:outline-none"
+            class="px-2 text-lg font-bold no-underline focus:outline-none"
             @click.prevent="getProducts"
-            >PRODUCT</button>
+            >BOARDS</button>
         <input
-            class="w-full rounded mx-4 focus:outline-none"
+            v-model="keyword"
+            class="w-full rounded mx-4 px-4 py-1 focus:outline-none"
             type="text">
-        <i class="fas fa-search"></i>
+        <button
+            @click.prevent="searchProduct"
+            class="focus:outline-none">
+            <i class="fas fa-search"></i>
+        </button>
         <router-link
             to="/admin"
             class="px-2">
@@ -49,6 +54,11 @@ export default {
         'user', 
         'products'
     ],
+    data () {
+        return {
+            keyword: ''
+        }
+    },
     methods: {
         logout () {
             this.$emit('logout')
@@ -61,6 +71,9 @@ export default {
         },
         toLoginPage() {
             this.$emit('toLoginPage')
+        },
+        searchProduct() {
+            this.keyword = ''
         }
     }
 }

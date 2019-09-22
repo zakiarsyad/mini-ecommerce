@@ -45,7 +45,7 @@ export default {
     return {
         server: `http://localhost:3000`,
         isLogin: false,
-        isAdmin: false,
+        isAdmin: false, 
         user: {
             email: '',
             password: '',
@@ -77,8 +77,12 @@ export default {
                 .then(({ data }) => {
                     token = data.token
                     
-                    if( data.role === 'admin' ) this.isAdmin = true
-
+                    if( data.role === 'admin' ) {
+                        this.isAdmin = true
+                        this.loading = false
+                        this.isLogin = true
+                        this.$router.push('/admin')
+                    } else {
                         return axios({
                             method: `post`,
                             url: `${this.server}/carts`,
@@ -86,7 +90,7 @@ export default {
                                 token: data.token
                             }
                         })
-                    // }
+                    }
                 })
                 .then(({ data }) => {
                     this.loading = false
@@ -242,15 +246,42 @@ export default {
         },
         toLoginPage() {
             this.$router.push('/login')
+        },
+        checkToken() {
+            const token = localStorage.getItem('token')
+            console.log('ini token', token);
+
+            axios({
+                method: `post`,
+                url: `${this.server}/users/checkToken`,
+                headers: {
+                    token: token
+                }
+            })
+                .then(({ data }) => {
+                    console.log('ini data dari axios', data);
+
+                    if (data.isAdmin === true) {
+                        this.isLogin = true
+                        this.isAdmin = true
+                        this.$router.push('/admin')
+                    } else {
+                        this.isLogin = true
+                        this.$router.push('/')
+                    }
+                })
+                .catch(err => {
+                    localStorage.removeItem('token')
+                    this.$router.push('/login')
+                })
         }
     },
     created: function () {
-        // if (localStorage.getItem('token')) {
-        //     this.isLogin = true
-        //     this.$router.push('/')
-        // } else {
-        //     this.$router.push('/login')
-        // }
+        if (localStorage.getItem('token')) {
+            this.checkToken()
+        } else {
+            this.$router.push('/login')
+        }
     }
 }
 </script>
