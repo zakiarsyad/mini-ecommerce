@@ -36,13 +36,14 @@ class ProductController {
 
     static editProduct(req, res, next) {
         let { id } = req.params
-        let { name, price, category, stock } = req.body
+        let { name, price, category, stock, description} = req.body
 
         Product.findById(id)
             .then(product => {
                 if ( name )product.name = name
                 if ( price ) product.price = price
                 if ( category ) product.category = category
+                if ( description ) product.description = description
                 if ( stock ) product.stock = stock
                 if ( req.file ) {
                     const CLOUD_BUCKET = process.env.CLOUD_BUCKET

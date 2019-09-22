@@ -11,6 +11,7 @@ import AddToCart from './views/AddToCart.vue'
 import Checkout from './views/Checkout.vue'
 import AdminPage from './views/AdminPage.vue'
 import AddProduct from './views/AddProduct.vue'
+import EditProduct from './views/EditProduct.vue'
 
 Vue.use(Router)
 
@@ -31,7 +32,12 @@ export default new Router({
         path: '/admin/addproduct',
         name: 'addproduct',
         component: AddProduct
-      }]
+      }, {
+        path: '/admin/editproduct',
+        name: 'editproduct',
+        component: EditProduct
+      }
+      ]
     },
     {
       path: '/products',
