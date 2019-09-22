@@ -20,23 +20,32 @@
             <i class="fas fa-search"></i>
         </button>
         <router-link
+            v-if="isAdmin"
             to="/admin"
             class="px-2">
-            <i v-if="isAdmin" class="<i fas fa-user-cog fa-1.5x"></i>
+            <i class="<i fas fa-user-cog fa-1.5x"></i>
         </router-link>
         <router-link
+            v-if="isLogin && !isAdmin"
             to="/cart"
-            class="px-2">
-            <i v-if="isLogin && !isAdmin" class="fas fa-shopping-cart fa-1.5x"></i>
+            class="px-2 flex items-center">
+            <i class="fas fa-shopping-cart fa-1.5x"></i>cart
         </router-link>
         <router-link
+            v-if="isLogin && !isAdmin"
+            to="/cart/checkout"
+            class="px-2 flex items-center">
+            checkout
+        </router-link>
+        <router-link
+            v-if="isLogin && !isAdmin"
             to="/profile"
             class="px-2">
-            <i v-if="isLogin && !isAdmin" class="far fa-user-circle"></i>
+            <i class="far fa-user-circle"></i>
         </router-link>
         <button
             v-if="!isLogin"
-            class="rounded-lg flex justify-center focus:outline ou bg-transparent border border-black px-2 focus:outline-none hover:bg-black hover:text-white"
+            class="rounded-lg flex justify-center focus:outline ou bg-transparent border border-black px-2 focus:outline-none hover:bg-black hover:text-white ml-4"
             @click.prevent="toLoginPage">Login</button>
         <button
             v-if="isLogin"

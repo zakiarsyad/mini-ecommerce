@@ -6,6 +6,7 @@ const { authentication, cartAuthorization } = require('../middlewares/auth')
 router.use(authentication)
 router.get('/', CartController.getCart)
 router.post('/', CartController.createCart)
+router.patch('/:id', CartController.updateStatus)
 
 // router.use('/product/:id' ,cartAuthorization)
 router.post('/product/:id', CartController.addProduct)

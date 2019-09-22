@@ -21,7 +21,8 @@
                 @register="register"
                 @addToCart="addToCart"
                 @getCart="getCart"
-                @deleteFromCart="deleteFromCart"/>
+                @deleteFromCart="deleteFromCart"
+                @checkout="checkout"/>
         </div>
         <pageFooter 
             id="pageFooter"/>
@@ -81,6 +82,7 @@ export default {
                         this.isAdmin = true
                         this.loading = false
                         this.isLogin = true
+                        localStorage.setItem('token', token)
                         this.$router.push('/admin')
                     } else {
                         return axios({
@@ -274,6 +276,65 @@ export default {
                     localStorage.removeItem('token')
                     this.$router.push('/login')
                 })
+        },
+        checkout(cartId) {
+            this.loading = true
+            const token = localStorage.getItem('token')
+            
+            axios({
+                method: `patch`,
+                url: `${this.server}/carts/${cartId}`,
+                headers: {
+                    token: token
+                },
+                data: {
+                    status: 'confirmed'
+                }
+            })
+                .then(({ data }) => {
+                    this.loading = false
+                    this.$router.push('/cart/checkout')
+                    // const promises = []
+
+                    // data.items.forEach(el => {
+                    //     promises.push(this.reduceStock(el.productId, el.qty))
+                    // })
+
+                    // return Promise.all(promises)
+                // })
+                // .then(() => {
+                //     return axios({
+                //         method: `post`,
+                //         url: `${this.server}/carts`,
+                //         headers: {
+                //             token: data.token
+                //         }
+                //     })
+                // })
+                // .then(() => {
+                    
+                })
+                .catch(err => {
+                    this.loading = false
+                    this.$router.push('/cart')
+                })
+        },
+        reduceStock(productId, qty) {
+            const newStock = productId.stock - qty
+            const token = localStorage.getItem('token')
+            console.log(productId);
+            console.log(qty);
+
+            axios({
+                method: `patch`,
+                url: `${this.server}/products/${productId}/stock`,
+                headers: {
+                    token: token
+                },
+                data: {
+                    stock: newStock
+                }
+            })
         }
     },
     created: function () {

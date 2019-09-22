@@ -35,7 +35,23 @@ Response :
 }
 ```
 
-### 
+### `POST /users/checkToken`
+
+| Route               | HTTP   | Headers        | Body   | Description             | Additional Info |
+| ------------------- | ------ | -------------- | ------ | ----------------------- | --------------- |
+| `/users/checkToken` | `POST` | `token:String` | `none` | Login a registered user |                 |
+
+Status : `200`
+Response :
+
+```
+{
+		"isLogin" : "true",
+		"isAdmin" : "false"
+}
+```
+
+
 
 ## List of products routing
 
@@ -233,6 +249,43 @@ Response :
 }
 ```
 
+### `PATCH /carts/:id`
+
+| Route                | HTTP    | Headers        | Body   | Description                             | Additional Info                           |
+| -------------------- | ------- | -------------- | ------ | --------------------------------------- | ----------------------------------------- |
+| `/carts/product/:id` | `PATCH` | `token:String` | `none` | Edit confirmation status to user's cart | Authentication and authorization required |
+
+Status : `200`
+Response :
+
+```
+{
+    "status": "unpaid",
+    "_id": "5d85caf91404a562f0c6e7cc",
+    "userId": "5d85caf91404a562f0c6e7cb",
+    "items": [
+        {
+            "_id": "5d85cfd51404a562f0c6e7cd",
+            "productId": "5d85a0178cbce55fb31ff93b",
+            "qty": 3
+        },
+        {
+            "_id": "5d85d03c1404a562f0c6e7ce",
+            "productId": "5d85a0388cbce55fb31ff93c",
+            "qty": 2
+        },
+        {
+            "_id": "5d85d0701404a562f0c6e7cf",
+            "productId": "5d85a0178cbce55fb31ff93b",
+            "qty": 5
+        }
+    ],
+    "createdAt": "2019-09-21T07:02:17.898Z",
+    "updatedAt": "2019-09-21T08:18:02.376Z",
+    "__v": 6
+}
+```
+
 ### `POST /carts/product/:id`
 
 | Route                | HTTP   | Headers        | Body         | Description                  | Additional Info                           |
@@ -270,44 +323,7 @@ Response :
 }
 ```
 
-### `PATCH /carts/product/:id`
-
-| Route                | HTTP    | Headers        | Body   | Description                             | Additional Info                           |
-| -------------------- | ------- | -------------- | ------ | --------------------------------------- | ----------------------------------------- |
-| `/carts/product/:id` | `PATCH` | `token:String` | `none` | Edit confirmation status to user's cart | Authentication and authorization required |
-
-Status : `200`
-Response :
-
-```
-{
-    "status": "unpaid",
-    "_id": "5d85caf91404a562f0c6e7cc",
-    "userId": "5d85caf91404a562f0c6e7cb",
-    "items": [
-        {
-            "_id": "5d85cfd51404a562f0c6e7cd",
-            "productId": "5d85a0178cbce55fb31ff93b",
-            "qty": 3
-        },
-        {
-            "_id": "5d85d03c1404a562f0c6e7ce",
-            "productId": "5d85a0388cbce55fb31ff93c",
-            "qty": 2
-        },
-        {
-            "_id": "5d85d0701404a562f0c6e7cf",
-            "productId": "5d85a0178cbce55fb31ff93b",
-            "qty": 5
-        }
-    ],
-    "createdAt": "2019-09-21T07:02:17.898Z",
-    "updatedAt": "2019-09-21T08:18:02.376Z",
-    "__v": 6
-}
-```
-
-### DELETE /carts/product/:id`
+### `DELETE /carts/product/:id`
 
 | Route                | HTTP     | Headers        | Body   | Description                       | Additional Info                           |
 | -------------------- | -------- | -------------- | ------ | --------------------------------- | ----------------------------------------- |

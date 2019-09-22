@@ -11,13 +11,15 @@
                 </div>
                 <div class="w-1/12"></div>
                 <div class="w-5/12">
-                    <div class="flex justify-center relative">
-                        <h1 class="h-20 text-5xl font-bold mb-12">{{ productDetail.name }}</h1>
-                        <button
-                            @click.prevent="backToProducts"
-                            class="absolute top-0 right-0 rounded-lg flex justify-center focus:outline ou bg-transparent border border-black p-2 mt-6 focus:outline-none hover:bg-black hover:text-white">
-                            <i class="fas fa-times"></i>
-                        </button>
+                    <div>
+                        <div class="flex justify-center relative">
+                            <h1 class="h-16 text-xl font-bold">{{ productDetail.name }}</h1>
+                            <!-- <button
+                                @click.prevent="backToProducts"
+                                class="absolute top-0 right-0 rounded-lg flex justify-center focus:outline ou bg-transparent border border-black p-2 mt-6 focus:outline-none hover:bg-black hover:text-white">
+                                <i class="fas fa-times"></i>
+                            </button> -->
+                        </div>
                     </div>
                     
                     <div class="qty w-full rounded py-2 mt-2 flex justify-between border">

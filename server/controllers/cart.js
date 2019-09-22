@@ -106,6 +106,21 @@ class CartController {
             })
             .catch(next)
     }
+
+    static updateStatus(req, res, next) {
+        const { status } = req.body
+        const { id } = req.params
+
+        Cart.findById(id).populate('items.productId')
+            .then(cart => {
+                cart.status = status
+                return cart.save()
+            })
+            .then(cart => {
+                res.status(200).json(cart)
+            })
+            .catch(next)
+    }
 }
 
 module.exports = CartController

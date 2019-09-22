@@ -72,6 +72,22 @@ class ProductController {
             .catch(next)
     }
 
+    static editStock(req, res, next) {
+        let { id } = req.params
+        let { stock } = req.body
+
+        Product.findById(id)
+            .then(product => {
+                product.stock = stock
+
+                return product.save()
+            })
+            .then(product => {
+                res.status(200).json(product)
+            })
+            .catch(next)
+    }
+
     static deleteProduct(req, res, next) {
         let { id } = req.params
 

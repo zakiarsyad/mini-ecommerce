@@ -10,27 +10,53 @@
                     ADD NEW PRODUCT
                 </button>
             </div>
-            <div class="content text-center overflow-auto rounded-lg border border-green-500">
+            <div class="content text-center overflow-auto rounded-lg border border-black">
                 <div v-for="product in adminProduct" :key="product._id">
                     <div 
                         class="rounded shadow-lg m-4 py-4 px-8 bg-white flex cursor-pointer">
                         <div class="w-2/12 w-32 h-32 ">
                             <img class="shadow object-contain h-32 w-full" :src="product.image">
                         </div>
-                        <div class="w-10/12 text-left mx-6 px-4 flex">
-                            <div class="w-3/12">
-                                <p>name </p>
-                                <p>description </p>
-                                <p>category </p>
-                                <p>price </p>
-                                <p>stock </p>
+                        <div class="w-10/12 text-left mx-6 px-4">
+                            <div class="flex">
+                                <div class="w-3/12">
+                                    name
+                                </div>
+                                <div class="w-9/12">
+                                    {{ product.name }}
+                                </div>
                             </div>
-                            <div class="w-9/12">
-                                <p>: {{ product.name }}</p>
-                                <p>: {{ product.description }}</p>
-                                <p>: {{ product.category }}</p>
-                                <p>: {{ product.price }}</p>
-                                <p>: {{ product.stock }}</p>
+                            <div class="flex bg-gray-400">
+                                <div class="w-3/12">
+                                    description
+                                </div>
+                                <div class="w-9/12">
+                                    {{ product.description }}
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <div class="w-3/12">
+                                    category
+                                </div>
+                                <div class="w-9/12">
+                                    {{ product.category }}
+                                </div>
+                            </div>
+                            <div class="flex bg-gray-400">
+                                <div class="w-3/12">
+                                    price
+                                </div>
+                                <div class="w-9/12">
+                                    {{ product.price }}
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <div class="w-3/12">
+                                    stock
+                                </div>
+                                <div class="w-9/12">
+                                    {{ product.stock }}
+                                </div>
                             </div>
                         </div>
                         <button
@@ -102,6 +128,7 @@ export default {
             })
                 .then(({ data }) => {
                     this.loading = false
+                    this.$toast.open('Success add a new product')
                     this.$nextTick(() => {
                         this.getAdminProducts()
                     })
@@ -118,8 +145,6 @@ export default {
         },
         editProduct(editedProduct, id) {
             this.$router.push('/admin')
-            console.log(editedProduct);
-            console.log(id);
             this.loading = true
 
             axios({

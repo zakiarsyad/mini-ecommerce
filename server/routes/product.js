@@ -6,6 +6,7 @@ const gcs = require('../helpers/gcs')
 
 router.get('/', ProductController.getProducts)
 router.get('/:id', ProductController.getProduct)
+router.patch('/:id/stock', ProductController.editStock)
 
 router.use(authentication)
 router.post('/', adminAuthorization, gcs.multer.single('image'), gcs.sendUploadToGCS, ProductController.addProduct)
