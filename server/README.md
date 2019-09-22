@@ -1,6 +1,8 @@
 # 	Ecommerce with Express and TDD
 
 
+
+
 ## List of users routing
 
 ### `POST /users/register`
@@ -14,7 +16,21 @@ Response :
 
 ```
 {
-		"token" : "aksjdlkajdakdkapodkapd.........."
+    "token": "youraccesstokentomywebsite"
+}
+```
+
+Status : `400`
+Response :
+
+```
+{
+    "errors": [
+        "Email is required!",
+        "Email format is invalid!",
+        "Email is already registered!",
+        "Password is required!"
+    ]
 }
 ```
 
@@ -29,16 +45,27 @@ Response :
 
 ```
 {
-		"token" : "aksjdlkajdakdkapodkapd..........",
-		"role" : "customer"
+    "token": "youraccesstokentomywebsite",
+    "role": "customer"
+}
+```
+
+Status : `403`
+Response :
+
+```
+{
+    "errors": [
+        "Invalid username / password!"
+    ]
 }
 ```
 
 ### `POST /users/checkToken`
 
-| Route               | HTTP   | Headers        | Body   | Description             | Additional Info |
-| ------------------- | ------ | -------------- | ------ | ----------------------- | --------------- |
-| `/users/checkToken` | `POST` | `token:String` | `none` | Login a registered user |                 |
+| Route               | HTTP   | Headers        | Body   | Description                                                | Additional Info |
+| ------------------- | ------ | -------------- | ------ | ---------------------------------------------------------- | --------------- |
+| `/users/checkToken` | `POST` | `token:String` | `none` | Validation a token which stores in user's browser (if any) |                 |
 
 Status : `200`
 Response :
@@ -50,15 +77,26 @@ Response :
 }
 ```
 
+Status : `403`
+Response :
 
+```
+{
+    "errors": [
+        "Access token is invalid!"
+    ]
+}
+```
+
+### 
 
 ## List of products routing
 
 ### `GET /products`
 
-| Route       | HTTP  | Headers        | Body   | Description                | Additional Info |
-| ----------- | ----- | -------------- | ------ | -------------------------- | --------------- |
-| `/products` | `GET` | `token:String` | `none` | Get all available products |                 |
+| Route       | HTTP  | Headers | Body   | Description                | Additional Info |
+| ----------- | ----- | ------- | ------ | -------------------------- | --------------- |
+| `/products` | `GET` | `none`  | `none` | Get all available products |                 |
 
 Status : `200`
 Response :
@@ -66,153 +104,315 @@ Response :
 ```
 [
     {
-        "_id" : "123",
-        "productName" : "sendal gunung",
-        "price" : 1000,
-        "category" : "sendal",
-        "image" : "http://storage.google.com",
-        "stock" : 10,
-        "userId" : "123"
+        "_id": "5d87966626896606dabd68d2",
+        "name": "FIREWIRE MOONBEAM SURFBOARD - LFT",
+        "price": 499,
+        "category": "Shortboards",
+        "stock": 99,
+        "userId": "5d84df1e4ced03504cd4ae7f",
+        "image": "https://storage.googleapis.com/storage ......jpg",
+        "description": "Designed while thinking of small, and .........",
+        "createdAt": "2019-09-22T15:42:30.610Z",
+        "updatedAt": "2019-09-22T15:54:58.428Z",
+        "__v": 0
     },
     {
-        "_id" : "124",
-        "productName" : "sendal jepit",
-        "price" : 1000,
-        "category" : "sendal",
-        "image" : "http://storage.google.com",
-        "stock" : 10,
-        "userId" : "123"
+        "_id": "5d8796ab26896606dabd68d3",
+        "name": "TORQ POD MOD SURFBOARD - X-LITE",
+        "price": 525,
+        "category": "Mid Lengths",
+        "stock": 99,
+        "userId": "5d84df1e4ced03504cd4ae7f",
+        "image": "https://storage.googleapis.com/storage .......jpg",
+        "description": "Designed while thinking of small, and .......",
+        "createdAt": "2019-09-22T15:43:39.968Z",
+        "updatedAt": "2019-09-22T16:04:45.085Z",
+        "__v": 0
     }
 ]
 ```
 
 ### `GET /products/:id`
 
-| Route           | HTTP  | Headers        | Body   | Description          | Additional Info |
-| --------------- | ----- | -------------- | ------ | -------------------- | --------------- |
-| `/products/:id` | `GET` | `token:String` | `none` | Get a single product |                 |
+| Route           | HTTP  | Headers | Body   | Description                    | Additional Info |
+| --------------- | ----- | ------- | ------ | ------------------------------ | --------------- |
+| `/products/:id` | `GET` | `none`  | `none` | Get detail of a single product |                 |
 
 Status : `200`
 Response :
 
 ```
 {
-    "_id" : "123",
-    "productName" : "sendal gunung",
-    "price" : 1000,
-    "category" : "sendal",
-    "image" : "http://storage.google.com",
-    "stock" : 10
-    "userId" : "123"
+    "_id": "5d87966626896606dabd68d2",
+    "name": "FIREWIRE MOONBEAM SURFBOARD - LFT",
+    "price": 499,
+    "category": "Shortboards",
+    "stock": 99,
+    "userId": "5d84df1e4ced03504cd4ae7f",
+    "image": "https://storage.googleapis.com/storage ..........",
+    "description": "Designed while thinking of small, and .......",
+    "createdAt": "2019-09-22T15:42:30.610Z",
+    "updatedAt": "2019-09-22T15:54:58.428Z",
+    "__v": 0
+}
+```
+
+### `PATCH /products/:id/stock`
+
+| Route                 | HTTP    | Headers | Body           | Description                                              | Additional Info |
+| --------------------- | ------- | ------- | -------------- | -------------------------------------------------------- | --------------- |
+| `/products/:id/stock` | `PATCH` | `none`  | `stock:Number` | Modify stock of product (if user buy or cancel an order) |                 |
+
+Status : `200`
+Response :
+
+```
+{
+    "_id": "5d87966626896606dabd68d2",
+    "name": "FIREWIRE MOONBEAM SURFBOARD - LFT",
+    "price": 499,
+    "category": "Shortboards",
+    "stock": 88,
+    "userId": "5d84df1e4ced03504cd4ae7f",
+    "image": "https://storage.googleapis.com/storage ..........",
+    "description": "Designed while thinking of small, and .......",
+    "createdAt": "2019-09-22T15:42:30.610Z",
+    "updatedAt": "2019-09-22T15:54:58.428Z",
+    "__v": 0
 }
 ```
 
 ### `POST /products`
 
-| Route       | HTTP   | Headers        | Body                                                         | Description        | Additional Info         |
-| ----------- | ------ | -------------- | ------------------------------------------------------------ | ------------------ | ----------------------- |
-| `/products` | `POST` | `token:String` | `productName:String, price:Number, category:String, image:File, stock:Number, userId:String` | Add a new products | Authentication required |
+| Route       | HTTP   | Headers        | Body                                                         | Description        | Additional Info                                 |
+| ----------- | ------ | -------------- | ------------------------------------------------------------ | ------------------ | ----------------------------------------------- |
+| `/products` | `POST` | `token:String` | `name:String, price:Number, category:String, image:File, stock:Number, description:String` | Add a new products | Authentication and admin authorization required |
 
 Status : `201`
 Response :
 
 ```
 {
-    "_id" : "123",
-    "productName" : "sendal gunung",
-    "price" : 1000,
-    "category" : "sendal",
-    "image" : "http://storage.google.com",
-    "stock" : 10,
-    "userId" : "123"
+    "_id": "5d879efc26896606dabd68f5",
+    "name": "CATCH SURF ORIGINAL 54 TWIN FIN BEATER",
+    "price": 249,
+    "category": "Shortboards",
+    "stock": 100,
+    "userId": "5d84df1e4ced03504cd4ae7f",
+    "image": "https://storage.googleapis.com/storage .........jpg",
+    "description": "Designed while thinking of small, and ...........",
+    "createdAt": "2019-09-22T16:19:08.979Z",
+    "updatedAt": "2019-09-22T16:19:08.979Z",
+    "__v": 0
+}
+```
+
+Status : `401`
+Response :
+
+```
+{
+    "errors": [
+        "You are not authorized!"
+    ]
 }
 ```
 
 ### `PATCH /products/:id`
 
-| Route           | HTTP    | Headers        | Body                                                         | Description                  | Additional Info                           |
-| --------------- | ------- | -------------- | ------------------------------------------------------------ | ---------------------------- | ----------------------------------------- |
-| `/products/:id` | `PATCH` | `token:String` | `productName:String, price:Number, category:String, image:File, stock:Number, userId:String` | Edit all details of  product | Authentication and authorization required |
+| Route           | HTTP    | Headers        | Body                                                         | Description                            | Additional Info                                 |
+| --------------- | ------- | -------------- | ------------------------------------------------------------ | -------------------------------------- | ----------------------------------------------- |
+| `/products/:id` | `PATCH` | `token:String` | `name:String, price:Number, category:String, image:File, stock:Number, description:String` | Edit some or all details of  a product | Authentication and admin authorization required |
 
 Status : `200`
 Response :
 
 ```
 {
-    "_id" : "123",
-    "productName" : "sendal gunung",
-    "price" : 1000,
-    "category" : "sendal",
-    "image" : "http://storage.google.com",
-    "stock" : 10
-    "userId" : "123"
+    "_id": "5d879efc26896606dabd68f5",
+    "name": "CATCH SURF ORIGINAL 54 TWIN FIN BEATER",
+    "price": 249,
+    "category": "Shortboards",
+    "stock": 100,
+    "userId": "5d84df1e4ced03504cd4ae7f",
+    "image": "https://storage.googleapis.com/storage .........jpg",
+    "description": "Designed while thinking of small, and ...........",
+    "createdAt": "2019-09-22T16:19:08.979Z",
+    "updatedAt": "2019-09-22T16:19:08.979Z",
+    "__v": 0
+}
+```
+
+Status : `401`
+Response :
+
+```
+{
+    "errors": [
+        "You are not authorized!"
+    ]
 }
 ```
 
 ### `DELETE /products/:id`
 
-| Route           | HTTP     | Headers        | Body   | Description      | Additional Info                           |
-| --------------- | -------- | -------------- | ------ | ---------------- | ----------------------------------------- |
-| `/products/:id` | `DELETE` | `token:String` | `none` | Delete a product | Authentication and authorization required |
+| Route           | HTTP     | Headers        | Body   | Description      | Additional Info                                 |
+| --------------- | -------- | -------------- | ------ | ---------------- | ----------------------------------------------- |
+| `/products/:id` | `DELETE` | `token:String` | `none` | Delete a product | Authentication and admin authorization required |
 
 Status : `200`
 Response :
 
 ```
 {
-    "_id" : "123",
-    "productName" : "sendal gunung",
-    "price" : 1000,
-    "category" : "sendal",
-    "image" : "http://storage.google.com",
-    "stock" : 10,
-    "userId" : "123"
+    "_id": "5d879efc26896606dabd68f5",
+    "name": "CATCH SURF ORIGINAL 54 TWIN FIN BEATER",
+    "price": 249,
+    "category": "Shortboards",
+    "stock": 100,
+    "userId": "5d84df1e4ced03504cd4ae7f",
+    "image": "https://storage.googleapis.com/storage .........jpg",
+    "description": "Designed while thinking of small, and ...........",
+    "createdAt": "2019-09-22T16:19:08.979Z",
+    "updatedAt": "2019-09-22T16:19:08.979Z",
+    "__v": 0
 }
 ```
 
+Status : `401`
+Response :
 
+```
+{
+    "errors": [
+        "You are not authorized!"
+    ]
+}
+```
+
+### 
 
 ## List of carts routing
 
 ### `GET /carts`
 
-| Route    | HTTP  | Headers        | Body   | Description              | Additional Info         |
-| -------- | ----- | -------------- | ------ | ------------------------ | ----------------------- |
-| `/carts` | `GET` | `token:String` | `none` | Get a user's unpaid cart | Authentication required |
+| Route    | HTTP  | Headers        | Body   | Description            | Additional Info                                 |
+| -------- | ----- | -------------- | ------ | ---------------------- | ----------------------------------------------- |
+| `/carts` | `GET` | `token:String` | `none` | Get all available cart | Authentication and admin authorization required |
 
 Status : `200`
 Response :
 
 ```
+[
+    {
+        "status": "completed",
+        "_id": "5d87995226896606dabd68e2",
+        "userId": {
+            "role": "customer",
+            "money": 10000,
+            "_id": "5d87959d26896606dabd68d0",
+            "email": "zaki@mail.com",
+            "password": "$2a$10$dimlrzOMs3pzy4SCHQBZKuNS8I2WdcEloUIM.L7K2/zfrPdF.MTQK",
+            "createdAt": "2019-09-22T15:39:09.373Z",
+            "updatedAt": "2019-09-22T15:39:09.373Z",
+            "__v": 0
+        },
+        "items": [
+            {
+                "_id": "5d879b9726896606dabd68f1",
+                "productId": {
+                    "_id": "5d8796ab26896606dabd68d3",
+                    "name": "TORQ POD MOD SURFBOARD - X-LITE",
+                    "price": 525,
+                    "category": "Mid Lengths",
+                    "stock": 99,
+                    "userId": "5d84df1e4ced03504cd4ae7f",
+                    "image": "https://storage.googleapis.com/storage-......jpg",
+                    "description": "Designed while thinking of small, and .....",
+                    "createdAt": "2019-09-22T15:43:39.968Z",
+                    "updatedAt": "2019-09-22T16:04:45.085Z",
+                    "__v": 0
+                },
+                "qty": 1
+            }
+        ],
+        "createdAt": "2019-09-22T15:54:58.459Z",
+        "updatedAt": "2019-09-22T16:04:57.812Z",
+        "__v": 2
+]
+```
+
+Status : `401`
+Response :
+
+```
 {
-    "status": "unpaid",
-    "_id": "5d800a7fd59c36177c8227e9",
-    "userId": "5d7f7f64e58ee6108f417344",
-    "items": [
-        {
-            "_id": "5d800a81d59c36177c8227ea",
-            "productId": {
-                "_id": "5d7f9f03db6198156b231bff",
-                "productName": "jagung",
-                "price": 5000,
-                "category": "minuman",
-                "stock": 10,
-                "userId": "5d7f7f64e58ee6108f417344",
-                "image": "https://storage.googleapis.com/storage-			ecommerce.zakiarsyad.com/1568644866293astetic.jpg",
-                "createdAt": "2019-09-16T14:41:07.386Z",
-                "updatedAt": "2019-09-16T14:41:07.386Z",
-                "__v": 0
-            },
-            "qty": 2
-        }
-    ],
-    "createdAt": "2019-09-16T22:19:43.012Z",
-    "updatedAt": "2019-09-16T22:19:45.249Z",
-    "__v": 1
+    "errors": [
+        "You are not authorized!"
+    ]
 }
 ```
 
+### `GET /carts/user`
 
+| Route         | HTTP  | Headers        | Body   | Description     | Additional Info         |
+| ------------- | ----- | -------------- | ------ | --------------- | ----------------------- |
+| `/carts/user` | `GET` | `token:String` | `none` | Get user's cart | Authentication required |
+
+Status : `200`
+Response :
+
+```
+[
+    {
+        "status": "completed",
+        "_id": "5d87995226896606dabd68e2",
+        "userId": {
+            "role": "customer",
+            "money": 10000,
+            "_id": "5d87959d26896606dabd68d0",
+            "email": "zaki@mail.com",
+            "password": "$2a$10$dimlrzOMs3pzy4SCHQBZKuNS8I2WdcEloUIM.L7K2/zfrPdF.MTQK",
+            "createdAt": "2019-09-22T15:39:09.373Z",
+            "updatedAt": "2019-09-22T15:39:09.373Z",
+            "__v": 0
+        },
+        "items": [
+            {
+                "_id": "5d879b9726896606dabd68f1",
+                "productId": {
+                    "_id": "5d8796ab26896606dabd68d3",
+                    "name": "TORQ POD MOD SURFBOARD - X-LITE",
+                    "price": 525,
+                    "category": "Mid Lengths",
+                    "stock": 99,
+                    "userId": "5d84df1e4ced03504cd4ae7f",
+                    "image": "https://storage.googleapis.com/storage-......jpg",
+                    "description": "Designed while thinking of small, and .....",
+                    "createdAt": "2019-09-22T15:43:39.968Z",
+                    "updatedAt": "2019-09-22T16:04:45.085Z",
+                    "__v": 0
+                },
+                "qty": 1
+            }
+        ],
+        "createdAt": "2019-09-22T15:54:58.459Z",
+        "updatedAt": "2019-09-22T16:04:57.812Z",
+        "__v": 2
+]
+```
+
+Status : `401`
+Response :
+
+```
+{
+    "errors": [
+        "Please login first"
+    ]
+}
+```
 
 ### `POST /carts`
 
@@ -226,12 +426,12 @@ Response :
 ```
 {
     "status": "unpaid",
-    "_id": "5d85caf91404a562f0c6e7cc",
-    "userId": "5d85caf91404a562f0c6e7cb",
+    "_id": "5d879b9d26896606dabd68f3",
+    "userId": "5d87959d26896606dabd68d0",
     "items": [],
-    "createdAt": "2019-09-21T07:02:17.898Z",
-    "updatedAt": "2019-09-21T08:18:02.376Z",
-    "__v": 6
+    "createdAt": "2019-09-22T16:04:45.113Z",
+    "updatedAt": "2019-09-22T16:04:45.113Z",
+    "__v": 0
 }
 ```
 
@@ -250,48 +450,144 @@ Response :
 }
 ```
 
+Status : `401`
+Response :
+
+```
+{
+    "errors": [
+        "Please login first"
+    ]
+}
+```
+
 ### `PATCH /carts/:id`
 
-| Route                | HTTP    | Headers        | Body   | Description                             | Additional Info                           |
-| -------------------- | ------- | -------------- | ------ | --------------------------------------- | ----------------------------------------- |
-| `/carts/product/:id` | `PATCH` | `token:String` | `none` | Edit confirmation status to user's cart | Authentication and authorization required |
+| Route        | HTTP    | Headers        | Body            | Description        | Additional Info                           |
+| ------------ | ------- | -------------- | --------------- | ------------------ | ----------------------------------------- |
+| `/carts/:id` | `PATCH` | `token:String` | `status:String` | Update cart status | Authentication and authorization required |
 
 Status : `200`
 Response :
 
 ```
 {
-    "status": "unpaid",
-    "_id": "5d85caf91404a562f0c6e7cc",
-    "userId": "5d85caf91404a562f0c6e7cb",
+    "status": "paid",
+    "_id": "5d87959d26896606dabd68d1",
+    "userId": "5d87959d26896606dabd68d0",
     "items": [
         {
-            "_id": "5d85cfd51404a562f0c6e7cd",
-            "productId": "5d85a0178cbce55fb31ff93b",
-            "qty": 3
-        },
-        {
-            "_id": "5d85d03c1404a562f0c6e7ce",
-            "productId": "5d85a0388cbce55fb31ff93c",
-            "qty": 2
-        },
-        {
-            "_id": "5d85d0701404a562f0c6e7cf",
-            "productId": "5d85a0178cbce55fb31ff93b",
-            "qty": 5
+            "_id": "5d87994c26896606dabd68e0",
+            "productId": {
+                "_id": "5d87966626896606dabd68d2",
+                "name": "FIREWIRE MOONBEAM SURFBOARD - LFT",
+                "price": 499,
+                "category": "Shortboards",
+                "stock": 88,
+                "userId": "5d84df1e4ced03504cd4ae7f",
+                "image": "https://storage.googleapis.com/storage-.......jpg",
+                "description": "Designed while thinking of small, and ......",
+                "createdAt": "2019-09-22T15:42:30.610Z",
+                "updatedAt": "2019-09-22T16:15:39.458Z",
+                "__v": 0
+            },
+            "qty": 1
         }
     ],
-    "createdAt": "2019-09-21T07:02:17.898Z",
-    "updatedAt": "2019-09-21T08:18:02.376Z",
-    "__v": 6
+    "createdAt": "2019-09-22T15:39:09.555Z",
+    "updatedAt": "2019-09-22T16:33:09.550Z",
+    "__v": 2
+}
+```
+
+Status : `401`
+Response :
+
+```
+{
+    "errors": [
+        "Please login first"
+    ]
+}
+```
+
+Status : `401`
+Response :
+
+```
+{
+    "errors": [
+        "You are not authorized!"
+    ]
+}
+```
+
+### `DELETE /carts/:id`
+
+| Route        | HTTP     | Headers        | Body   | Description   | Additional Info                           |
+| ------------ | -------- | -------------- | ------ | ------------- | ----------------------------------------- |
+| `/carts/:id` | `DELETE` | `token:String` | `none` | Delete a cart | Authentication and authorization required |
+
+Status : `200`
+Response :
+
+```
+{
+    "status": "paid",
+    "_id": "5d87959d26896606dabd68d1",
+    "userId": "5d87959d26896606dabd68d0",
+    "items": [
+        {
+            "_id": "5d87994c26896606dabd68e0",
+            "productId": {
+                "_id": "5d87966626896606dabd68d2",
+                "name": "FIREWIRE MOONBEAM SURFBOARD - LFT",
+                "price": 499,
+                "category": "Shortboards",
+                "stock": 88,
+                "userId": "5d84df1e4ced03504cd4ae7f",
+                "image": "https://storage.googleapis.com/storage-.......jpg",
+                "description": "Designed while thinking of small, and ......",
+                "createdAt": "2019-09-22T15:42:30.610Z",
+                "updatedAt": "2019-09-22T16:15:39.458Z",
+                "__v": 0
+            },
+            "qty": 1
+        }
+    ],
+    "createdAt": "2019-09-22T15:39:09.555Z",
+    "updatedAt": "2019-09-22T16:33:09.550Z",
+    "__v": 2
+}
+```
+
+Status : `401`
+Response :
+
+```
+{
+    "errors": [
+        "Please login first"
+    ]
+}
+```
+
+Status : `401`
+Response :
+
+```
+{
+    "errors": [
+        "You are not authorized!"
+    ]
 }
 ```
 
 ### `POST /carts/product/:id`
 
-| Route                | HTTP   | Headers        | Body         | Description                  | Additional Info                           |
-| -------------------- | ------ | -------------- | ------------ | ---------------------------- | ----------------------------------------- |
-| `/carts/product/:id` | `POST` | `token:String` | `qty:Number` | Add a product to user's cart | Authentication and authorization required |
+| Route                | HTTP   | Headers        | Body   | Description                  | Additional Info         |
+| -------------------- | ------ | -------------- | ------ | ---------------------------- | ----------------------- |
+| `/carts/product/:id` | `POST` | `token:String` | `none` | Add a product to user's cart | Authentication required |
 
 Status : `200`
 Response :
@@ -304,18 +600,20 @@ Response :
     "items": [
         {
             "_id": "5d85cfd51404a562f0c6e7cd",
-            "productId": "5d85a0178cbce55fb31ff93b",
+            "productId": {
+                "_id": "5d87966626896606dabd68d2",
+                "name": "FIREWIRE MOONBEAM SURFBOARD - LFT",
+                "price": 499,
+                "category": "Shortboards",
+                "stock": 88,
+                "userId": "5d84df1e4ced03504cd4ae7f",
+                "image": "https://storage.googleapis.com/storage-.......jpg",
+                "description": "Designed while thinking of small, and ......",
+                "createdAt": "2019-09-22T15:42:30.610Z",
+                "updatedAt": "2019-09-22T16:15:39.458Z",
+                "__v": 0
+            },
             "qty": 3
-        },
-        {
-            "_id": "5d85d03c1404a562f0c6e7ce",
-            "productId": "5d85a0388cbce55fb31ff93c",
-            "qty": 2
-        },
-        {
-            "_id": "5d85d0701404a562f0c6e7cf",
-            "productId": "5d85a0178cbce55fb31ff93b",
-            "qty": 5
         }
     ],
     "createdAt": "2019-09-21T07:02:17.898Z",
@@ -324,22 +622,68 @@ Response :
 }
 ```
 
+Status : `401`
+Response :
+
+```
+{
+    "errors": [
+        "Please login first"
+    ]
+}
+```
+
 ### `DELETE /carts/product/:id`
 
-| Route                | HTTP     | Headers        | Body   | Description                       | Additional Info                           |
-| -------------------- | -------- | -------------- | ------ | --------------------------------- | ----------------------------------------- |
-| `/carts/product/:id` | `DELETE` | `token:String` | `none` | Delete a product from user's cart | Authentication and authorization required |
+| Route                | HTTP     | Headers        | Body   | Description                       | Additional Info         |
+| -------------------- | -------- | -------------- | ------ | --------------------------------- | ----------------------- |
+| `/carts/product/:id` | `DELETE` | `token:String` | `none` | Delete a product from user's cart | Authentication required |
 
 Status : `200`
 Response :
 
 ```
 {
-		"deletedProduct" : "kopi"
+    "status": "unpaid",
+    "_id": "5d85caf91404a562f0c6e7cc",
+    "userId": "5d85caf91404a562f0c6e7cb",
+    "items": [
+        {
+            "_id": "5d85cfd51404a562f0c6e7cd",
+            "productId": {
+                "_id": "5d87966626896606dabd68d2",
+                "name": "FIREWIRE MOONBEAM SURFBOARD - LFT",
+                "price": 499,
+                "category": "Shortboards",
+                "stock": 88,
+                "userId": "5d84df1e4ced03504cd4ae7f",
+                "image": "https://storage.googleapis.com/storage-.......jpg",
+                "description": "Designed while thinking of small, and ......",
+                "createdAt": "2019-09-22T15:42:30.610Z",
+                "updatedAt": "2019-09-22T16:15:39.458Z",
+                "__v": 0
+            },
+            "qty": 3
+        }
+    ],
+    "createdAt": "2019-09-21T07:02:17.898Z",
+    "updatedAt": "2019-09-21T08:18:02.376Z",
+    "__v": 6
 }
 ```
 
+Status : `401`
+Response :
 
+```
+{
+    "errors": [
+        "Please login first"
+    ]
+}
+```
+
+### 
 
 
 

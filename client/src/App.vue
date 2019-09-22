@@ -460,7 +460,14 @@ export default {
             })
                 .then(({ data }) => {
                     this.loading = false
-                    this.adminCart = data
+
+                    const cartToDisplayy = []
+
+                    data.forEach(cart => {
+                        if (cart.status !== 'unpaid') cartToDisplayy.push(cart)
+                    })
+
+                    this.adminCart = cartToDisplayy
                 })
                 .catch(err => {
                     this.loading = false

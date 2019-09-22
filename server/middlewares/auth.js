@@ -32,15 +32,15 @@ function adminAuthorization(req, res, next) {
 }
 
 function cartAuthorization(req, res, next) {
-    const productId = req.params.id
+    const cartId = req.params.id
     const userId = req.decode.userId
 
-    Product.findOne({ _id: productId })
-        .then(product => {
-            if (product) {
-                if (product.userId == userId) next()
+    Cart.findOne({ _id: cartId })
+        .then(cart => {
+            if (cart) {
+                if (cart.userId == userId) next()
                 else next({ status: 401, message: `You are not authorized` })
-            } else next({ status: 404, message: `product id is invalid` })
+            } else next({ status: 404, message: `cart id is invalid` })
         })
         .catch(next)
 }

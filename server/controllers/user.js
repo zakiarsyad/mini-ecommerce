@@ -5,9 +5,9 @@ const { compareHash } = require('../helpers/bcryptjs')
 
 class UserController {
     static register(req, res, next) {
-        let { email, password } = req.body
+        let { email, password, role } = req.body
 
-        User.create({ email, password })
+        User.create({ email, password, role })
             .then(user => {
                 const token = generateToken({
                     userId: user._id,

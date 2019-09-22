@@ -33,7 +33,23 @@ describe('User', function () {
                 })
         })
 
-        it('should return error message when calling the POST method', function (done) {
+        it('should create a new admin when calling the POST method', function (done) {
+            chai.request(app)
+                .post('/users/register')
+                .send({
+                    email: 'admin@mail.com',
+                    password: '123',
+                    role: 'admin'
+                })
+                .end(function (err, res) {
+                    expect(err).to.be.null
+                    expect(res).to.have.status(201)
+                    expect(res.body).to.have.own.property('token')
+                    done()
+                })
+        })
+
+        it('should return error message if email and password is empty', function (done) {
             chai.request(app)
                 .post('/users/register')
                 .send({
@@ -49,7 +65,7 @@ describe('User', function () {
                 })
         })
 
-        it('should return validation error when calling the POST method', function (done) {
+        it('should return validation error if email format is invalid', function (done) {
             chai.request(app)
                 .post('/users/register')
                 .send({
@@ -64,7 +80,7 @@ describe('User', function () {
                 })
         })
 
-        it('should return validation error when calling the POST method', function (done) {
+        it('should return validation error if email is already registered', function (done) {
             chai.request(app)
                 .post('/users/register')
                 .send({
@@ -96,7 +112,7 @@ describe('User', function () {
                 })
         })
 
-        it('should return error message when calling the POST method', function (done) {
+        it('should return error message if username/password is invalid', function (done) {
             chai.request(app)
                 .post('/users/login')
                 .send({
@@ -111,7 +127,7 @@ describe('User', function () {
                 })
         })
 
-        it('should return error message when calling the POST method', function (done) {
+        it('should return error message if username/password is empty', function (done) {
             chai.request(app)
                 .post('/users/login')
                 .send({

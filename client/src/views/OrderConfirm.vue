@@ -1,6 +1,6 @@
 <template>
     <div class="w-10/12 mx-auto my-12">
-        <h1 class="h-20 text-5xl font-bold text-center mb-24">CHECKOUT HISTORY</h1>
+        <h1 class="h-20 text-5xl font-bold text-center mb-24">ORDER CONFIRMATION</h1>
         <hr>
         <div class="flex">
             <div class="w-5/12 flex justify-center my-3 font-bold text-xl">Order id</div>
