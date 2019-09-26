@@ -1,7 +1,5 @@
-# 	Ecommerce with Express and TDD
-
-
-
+# 	mini-ecommerce-server
+Built using Node.js
 
 ## List of users routing
 
