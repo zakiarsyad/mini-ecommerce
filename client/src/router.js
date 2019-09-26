@@ -31,11 +31,11 @@ export default new Router({
       name: 'adminpage',
       component: AdminPage,
       children: [{
-        path: '/admin/addproduct',
+        path: 'addproduct',
         name: 'addproduct',
         component: AddProduct
       }, {
-        path: '/admin/editproduct',
+        path: 'editproduct',
         name: 'editproduct',
         component: EditProduct
       }
@@ -46,7 +46,7 @@ export default new Router({
       name: 'products',
       component: Products,
       children: [{
-        path: '/products/:id',
+        path: ':id',
         name: 'productdetail',
         component: ProductDetail
       }]
@@ -66,7 +66,7 @@ export default new Router({
       name: 'cart',
       component: Cart,
       children: [{
-        path: '/cart/checkout',
+        path: 'checkout',
         name: 'checkout',
         component: Checkout
       }]
